@@ -22,9 +22,13 @@ public class AposApplication implements CommandLineRunner {
 	@Override
 	public void run(String...str ) {
 
-		jdbcTemplate.query("SELECT ID, NAME from Users", new Object[] {},
-		        (rs, rowNum) -> new User()
-		    ).forEach(customer -> System.out.println(customer.toString()));
+		jdbcTemplate.query("SELECT ID, NAME,password from Users", new Object[] {},
+		        (rs, rowNum) -> { 
+		        	User usr = new User(rs.getLong(1),rs.getString(2),rs.getString(3));
+		        	
+		        	return usr;
+		        }
+		    ).forEach(user -> System.out.println(user.toString()));
 		
 	}
 
