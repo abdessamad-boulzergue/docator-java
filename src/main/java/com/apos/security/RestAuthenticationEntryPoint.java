@@ -25,11 +25,9 @@ implements AuthenticationEntryPoint, Serializable {
 
 	    //avoid CORS issues
 	    response.addHeader("Access-Control-Allow-Origin", "*");
-	    response.addHeader("Access-Control-Allow-Headers",
-	        "origin, content-type, accept, authorization");
+	    response.addHeader("Access-Control-Allow-Headers","origin, content-type, accept, authorization");
 	    response.addHeader("Access-Control-Allow-Credentials", "true");
-	    response.addHeader("Access-Control-Allow-Methods",
-	        "GET, POST, PUT, DELETE, OPTIONS, HEAD");
+	    response.addHeader("Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS, HEAD");
 
 	    if (org.springframework.http.HttpMethod.OPTIONS.equals(request.getMethod())) {
 		response.setStatus(200);
