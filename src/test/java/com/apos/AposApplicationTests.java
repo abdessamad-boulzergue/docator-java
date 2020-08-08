@@ -27,13 +27,12 @@ class AposApplicationTests {
     @Autowired
     private UserRepo repository;
 	@Test
-	void contextLoads() throws Exception {
+	void loadUsersNotAuthenticated() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/users/all")
 			      .contentType(MediaType.APPLICATION_JSON))
-			      .andExpect(MockMvcResultMatchers.status().isOk())
-			      .andExpect(MockMvcResultMatchers.content()
-			      .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			      .andExpect(MockMvcResultMatchers.jsonPath("$[0].name", is("bob")));
+			      .andExpect(MockMvcResultMatchers.status().is(401))
+			      .andExpect(MockMvcResultMatchers.content().string(""));
+			      
 	}
 
 }
