@@ -7,12 +7,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-/**
- * This class serialized DOM Node to a String
- *
- * @author gillesP
- *
- */
 public class HierarchieParseDomSerializer {
 
   private static final boolean _NO_CHILDS_IN_ATTR_ = false; // Only Crimson has no childs in Attr Node.

@@ -11,7 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.apos.models.User;
-import com.apos.util.JsonUtil;
+import com.apos.utils.JsonUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class JwtUser implements  UserDetails {

@@ -1,4 +1,4 @@
-package com.apos.util;
+package com.apos.utils;
 
 import java.util.Date;
 

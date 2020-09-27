@@ -25,9 +25,6 @@ public class XMLtoJSON {
     _hpInputXml = hpInputXml;
   }
   
-  /**
-   * set or modify an attribut
-  */
   public void setAttribut(String Key, String Value){
     if ((Key != null) && (Value != null) && _hpInputXml!=null) {
       _hpInputXml.setAttribut(Key, Value);

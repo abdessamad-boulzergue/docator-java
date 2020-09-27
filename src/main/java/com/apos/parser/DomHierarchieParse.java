@@ -134,12 +134,7 @@ public class DomHierarchieParse extends HierarchieParse{
 	  {
 	      return getLocalName(node.getNodeName());
 	  }
-	  /**
-	   * @param _nameSpaceAware :
-	   * true : renvoie le nom du noeud sans le namespace,
-	   * nécessite une déclaration correcte du xmlns avec xerces 2.5
-	   * false : renvoie le nom du noeud avec le namespace, par exemple "repository:P"
-	   */
+	
 	  public static String getType(Node node, boolean _nameSpaceAware)
 	  {
 	      String type = null;
@@ -150,18 +145,12 @@ public class DomHierarchieParse extends HierarchieParse{
 	      return type;
 	  }
 
-	  /**
-	   * @param _nameSpaceAware :
-	   * true : renvoie le nom du noeud sans le namespace,
-	   * false : renvoie le nom du noeud avec le namespace, par exemple "repository:P"
-	   */
+	
 	  public String getType(boolean _nameSpaceAware){
 	    return getType(node,_nameSpaceAware);
 	  }
 
-	  /**
-	   * utilise nameSpaceAware false : renvoie le nom du noeud avec le namespace (namespace:localName)
-	   */
+	
 	  public String getType(){
 	    String type = getType(false);
 	    return type;
