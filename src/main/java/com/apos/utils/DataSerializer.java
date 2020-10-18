@@ -23,16 +23,16 @@ public class DataSerializer {
   }
 
   public static Object deserialize ( String serialized )
-  throws Exception {
+  throws SerializerException {
     try {
       byte [] decoded = Base64.decode(serialized) ;
       ByteArrayInputStream stream = new ByteArrayInputStream(decoded) ;
       ObjectInputStream in = new ObjectInputStream(stream) ;
       return in.readObject() ;
     } catch( IOException e ) {
-      throw new Exception(DataSerializer.class + " deserialize IOERROR : " , e ) ;
+      throw new SerializerException(DataSerializer.class + " deserialize IOERROR : "+e.getMessage() , e ) ;
     } catch (ClassNotFoundException e) {
-      throw new Exception(DataSerializer.class + " deserialize ClassNotFound : " , e ) ;
+      throw new SerializerException(DataSerializer.class + " deserialize ClassNotFound : "+e.getMessage()  , e ) ;
     }
   }
 }

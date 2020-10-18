@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PluginLoader implements IPluginLoad{
-    Map<String, IPluginSource> sources = new HashMap<String, IPluginSource>();
+    Map<String, IPluginSource> sources = new HashMap<>();
     
     public PluginLoader() {
 		init();
@@ -35,12 +35,12 @@ public class PluginLoader implements IPluginLoad{
 	
 	@Override
 	public void init() {
-		sources.put("src1", new PluginSocketLoader("127.0.0.1", 29900));
+		sources.put("src1", new PluginSocketLoader("127.0.0.1", 19902));
 	}
 	@Override
 	public List<IPlugin> load() {
 		IPluginSource plugSrc = getSource("src1");
-		List<IPlugin> plugins = new ArrayList<IPlugin>();
+		List<IPlugin> plugins = new ArrayList<>();
 		if(plugSrc!=null)
 			plugins = plugSrc.getAll();
 		return plugins;

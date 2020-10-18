@@ -5,23 +5,31 @@ import java.util.Iterator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JsonUtils {
-
-	 public static HashMap<String, String> fromJsonHashMap(String name, String inHashMap) throws JSONException {
-		    JSONObject obj = new JSONObject(inHashMap);
-		    JSONObject map = obj.getJSONObject(name);
-		    return fromJsonHashMap(map);
+	private static Logger logger = LoggerFactory.getLogger(JsonUtils.class);
+	 public static HashMap<String, JSONObject> fromJsonHashMap(String name, String inHashMap)  {
+		 HashMap<String, JSONObject> returned = new HashMap<String, JSONObject>();   
+		 try {
+		    	JSONObject obj = new JSONObject(inHashMap);
+			    JSONObject map = obj.getJSONObject(name);
+			    returned= fromJsonHashMap(map);
+			} catch (JSONException e) {
+				JsonUtils.logger.error(e.toString());
+			}
+			return returned;
 		  }
 	
 	@SuppressWarnings("unchecked")
-	  public static HashMap<String, String> fromJsonHashMap(JSONObject map) throws JSONException {
-	    HashMap<String, String> returned = new HashMap<String, String>();
+	  public static HashMap<String, JSONObject> fromJsonHashMap(JSONObject map) throws JSONException {
+	    HashMap<String, JSONObject> returned = new HashMap<>();
 
 	    Iterator<String> it = map.keys();
 	    while (it.hasNext()) {
 	      String curK = it.next();
-	      String curVal = map.getString(curK);
+	      JSONObject curVal = map.getJSONObject(curK);
 	      returned.put(curK, curVal);
 	    }
 	    return returned;
