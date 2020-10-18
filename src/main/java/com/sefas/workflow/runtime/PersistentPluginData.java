@@ -4,7 +4,10 @@ import java.io.Serializable;
 
 import javax.swing.ImageIcon;
 
+import org.json.JSONObject;
+
 import com.apos.plugins.RemoteImageIcon;
+import com.apos.utils.Base64;
 
 public class PersistentPluginData
 implements Serializable {
@@ -15,7 +18,6 @@ implements Serializable {
 	 */
   private static final long serialVersionUID = -6862317013306384631L;
   private byte[] _icon = null ;
-  private byte[] _tinyIcon = null ;
   private String _name = null ;
   private String _description = null  ;
   private int _type = 0 ;
@@ -32,7 +34,6 @@ implements Serializable {
                                String pythonFileName ,
                                String resType) {
     _icon = icon.getImageData() ;
-    _tinyIcon = tinyIcon.getImageData() ;
     _name = name ;
     _description = description ;
     _type = type ;
@@ -40,7 +41,17 @@ implements Serializable {
     _className= className;
     _resTypes = resType;
   }
-
+  public static PersistentPluginData fromJson(JSONObject json) {
+	  
+	RemoteImageIcon icon = new RemoteImageIcon(Base64.decode(json.getString("icon")));
+	String name = json.getString("name");
+	String description = null;
+	int type = 0;
+	String className = null;
+	String pythonFileName = json.getString("name");
+	String resType = null;
+	return new PersistentPluginData(icon, null, name, description, type, className, pythonFileName, resType);
+  }
   public String getDescription() {
     return _description ;
   }
@@ -59,10 +70,6 @@ implements Serializable {
   public byte[] getIcon() {
 	    return _icon ;
 	  }
-  public ImageIcon getTinyIcon() {
-    return new ImageIcon(_tinyIcon) ;
-  }
-
 
   public int getType() {
     return _type ;

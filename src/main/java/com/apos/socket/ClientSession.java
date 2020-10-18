@@ -81,7 +81,6 @@ public class ClientSession {
 	        if (ii != blobLength - 1) // bypass when length is reached
 	          c = _inStream.read();
 	      }
-	      // System.out.println(toString()+"blobContent ("+buf.length()+")=" + buf.toString() ) ;
 	      return buf.toString();
 	    } catch (IOException e) {
 	      throw new Exception("IO ERROR reading from SMD client :" + e.getMessage());

@@ -1,67 +1,56 @@
 package com.apos.plugins;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.apos.socket.ClientStub;
 import com.apos.utils.JsonUtils;
+import com.apos.utils.SerializerException;
 import com.sefas.workflow.runtime.PersistentPluginData;
 
 public class PluginSocketLoader implements IPluginSource {
 	
-	private static final String _BLOB_START_ = "<BLOB>";
-	private static final String _BLOB_END_ = "</BLOB>";
+	private static final String BLOB_START = "<BLOB>";
+	private static final String BLOB_END = "</BLOB>";
+	private static final  String RETOK = "<OK>";
+    private static final  String ENDRETOK = "</OK>";
     private String host ;
 	private Integer port;
 	private ClientStub stub;
-	
+	String contextWf;
+	private static Logger logger = LoggerFactory.getLogger(PluginSocketLoader.class);
 	public PluginSocketLoader(String host, Integer port) {
 		this.host=host;
 		this.port = port;
-	    stub = new ClientStub(host, port);
-
+	    stub = new ClientStub(this.host, this.port);
 	}
-	
+	public void close() {
+		if(stub!=null)
+		 stub.stopSession();
+	}
 	public IPlugin get(String key) {
-		
 
-	      RemoteShadowPlugin plug =null;
-
+		IPlugin plug =null;
 	    try {
-	      stub.startSession();
-	      String jsonCommand="{\"json_command\":[\"ALC CLASS:/com.sefas.workflowservice.WorkflowFactory\",\"MTH loadPlugins\",\"DPRM args s\",\"SPRM args = 'SFS8bae9d8@174cbdb309f@-7fbc'\",\"DPRM args s\",\"SPRM args = 'toolboxes'\",\"DPRM args s\",\"SPRM args = ''\",\"BCALL\\n\"]}";
-	      String result = stub.sendAndReceiveBlob("JSON " + jsonCommand + "\n");	      
-	      
-	      if (result.startsWith(_BLOB_START_)) {
-	          StringBuffer buf = new StringBuffer(result);
-	          int length = buf.length();
-	          int offset = length - _BLOB_END_.length();
-	          buf.delete(offset, length); // cleanup end
-	          buf.delete(0, _BLOB_START_.length()); // cleanup start
-	          result =  buf.toString();
-	        }
-	      
-	      HashMap<String, String> remoteH= JsonUtils.fromJsonHashMap("plugins", result);
-	      Iterator<String> it = remoteH.keySet().iterator();
+	      Iterator<IPlugin> it = getAll().iterator();
 	      while (it.hasNext()) {
-		        String pluginKey = it.next();
-		        String serialized = remoteH.get(pluginKey);
-		     
-		        PersistentPluginData dataInstance = RemoteShadowPlugin.deserializeInstance(serialized);
-		        System.out.println(dataInstance.getName());
-		        
-		        switch (dataInstance.getType()) {
-		        default:
-		        	if(pluginKey.equals(key))
-		        	plug =  new RemoteShadowPlugin( pluginKey, dataInstance);
-		      }
+		        IPlugin plugin = it.next();
+		        if(plugin.getId().equals(key)) {
+		        	plug = plugin;
+		        	break;
+		        }
 	      }
-	      stub.stopSession();
-	    } catch (Exception e) {
+	      
+	    } catch (JSONException e) {
 	       e.printStackTrace();
-	      System.out.println(e.getMessage());
 	    }
 		return plug;
 	  
@@ -69,42 +58,70 @@ public class PluginSocketLoader implements IPluginSource {
 
 	@Override
 	public List<IPlugin> getAll() {
+		return loadPluginsIn("apos");
+	}
+	protected String unmarshall(String content) throws UnmarshallException {
+	    int whereRet = content.indexOf(RETOK);
+
+	    if (whereRet == -1) {
+	      throw new UnmarshallException(" failed : " +content);
+	    }
+
+	    int whereEndRet = content.indexOf(ENDRETOK);
+	    int start = whereRet + RETOK.length();
+
+	    return content.substring(start, whereEndRet);
+	  }
+	public void initContextWf(){
+		contextWf  = runCommand("initContext",Arrays.asList());
+		logger.debug(contextWf);
 		
-
-	      RemoteShadowPlugin plug =null;
-			List<IPlugin> plugins= new ArrayList<IPlugin>();
-
-	    try {
-	      stub.startSession();
-	      String jsonCommand="{\"json_command\":[\"ALC CLASS:/com.sefas.workflowservice.WorkflowFactory\",\"MTH loadPlugins\",\"DPRM args s\",\"SPRM args = 'SFS8bae9d8@174cbdb309f@-7fbc'\",\"DPRM args s\",\"SPRM args = 'sefasplugins'\",\"DPRM args s\",\"SPRM args = ''\",\"BCALL\\n\"]}";
-	      String result = stub.sendAndReceiveBlob("JSON " + jsonCommand + "\n");	      
-	      
-	      if (result.startsWith(_BLOB_START_)) {
-	          StringBuffer buf = new StringBuffer(result);
-	          int length = buf.length();
-	          int offset = length - _BLOB_END_.length();
-	          buf.delete(offset, length); // cleanup end
-	          buf.delete(0, _BLOB_START_.length()); // cleanup start
-	          result =  buf.toString();
-	        }
-	      
-	      HashMap<String, String> remoteH= JsonUtils.fromJsonHashMap("plugins", result);
-	      Iterator<String> it = remoteH.keySet().iterator();
-	      while (it.hasNext()) {
+	}
+	String runCommand(String mth , List<Object> params) {
+		synchronized(stub) {
+			stub.startSession();
+			stub.marshall("ALC");
+			stub.marshall("MTH ".concat(mth));
+			params.stream().forEach(param->{
+				if(param instanceof String) {
+					stub.marshall("DPRM args s");	
+				}
+				else if(param instanceof Integer) {
+					stub.marshall("DPRM args d");	
+				}
+				stub.marshall("SPRM args = '".concat(String.valueOf(param)).concat("'"));
+			});
+			String result  = stub.marshall("CALL\n");
+			close();
+			try {
+				return unmarshall(result);
+			} catch (UnmarshallException e) {
+				logger.error(e.getMessage());
+			}
+		}
+	     return null;
+		
+	}
+	public List<IPlugin> loadPluginsIn(String location){
+		
+		if(this.contextWf==null || this.contextWf.trim().isEmpty()) {
+			initContextWf();
+		}
+		String result = runCommand("loadPlugins",Arrays.asList(contextWf,location));
+		HashMap<String, JSONObject> remoteH = JsonUtils.fromJsonHashMap("plugins", result);
+		Iterator<String> it = remoteH.keySet().iterator();
+		List<IPlugin> plugins = new ArrayList<>();
+		while (it.hasNext()) {
 		        String pluginKey = it.next();
-		        String serialized = remoteH.get(pluginKey);
-		     
+		        JSONObject serialized = remoteH.get(pluginKey);		     
 		        PersistentPluginData dataInstance = RemoteShadowPlugin.deserializeInstance(serialized);
-		        System.out.println(dataInstance.getName());
 		        plugins.add( new RemoteShadowPlugin( pluginKey, dataInstance));
 	      }
-	      stub.stopSession();
-	    } catch (Exception e) {
-	       e.printStackTrace();
-	      System.out.println(e.getMessage());
-	    }
-		return plugins;
-	  
+			return plugins;
+	}
+	@Override
+	public void init() {
+		initContextWf();
 	}
 
 }

@@ -1,6 +1,9 @@
 package com.apos.plugins;
 
+import org.json.JSONObject;
+
 import com.apos.utils.DataSerializer;
+import com.apos.utils.SerializerException;
 import com.sefas.workflow.runtime.PersistentPluginData;
 
 public class RemoteShadowPlugin implements IPlugin {
@@ -11,7 +14,7 @@ public class RemoteShadowPlugin implements IPlugin {
 		this.localIntance = dataInstance;
 	}
 
-	public static PersistentPluginData deserializeInstance(String serialized) throws Exception {
+	public static PersistentPluginData deserializeInstance(String serialized) throws SerializerException  {
 		return (PersistentPluginData) DataSerializer.deserialize(serialized);
 	}
 
@@ -31,6 +34,15 @@ public class RemoteShadowPlugin implements IPlugin {
 	public String getType() {
 		  if (localIntance == null) { return null; }
 		    return String.valueOf(localIntance.getType());
+	}
+
+	@Override
+	public String getId() {
+		return localIntance.getPythonFileName();
+	}
+
+	public static PersistentPluginData deserializeInstance(JSONObject serialized) {
+		return  PersistentPluginData.fromJson(serialized);
 	}
 
 }
