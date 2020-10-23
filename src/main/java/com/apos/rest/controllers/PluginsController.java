@@ -24,7 +24,7 @@ public class PluginsController {
 	
 	@GetMapping
 	ResponseEntity<IPlugin> getPlugin(@RequestParam(name = "key") String key){
-		System.out.println("key : "+key);
+
 		IPlugin plugin = _ploader.load(key);
 	     return ResponseEntity.status(HttpStatus.OK).body(plugin) ; 
 	}

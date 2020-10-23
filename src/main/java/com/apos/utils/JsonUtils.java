@@ -2,6 +2,7 @@ package com.apos.utils;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,8 +11,8 @@ import org.slf4j.LoggerFactory;
 
 public class JsonUtils {
 	private static Logger logger = LoggerFactory.getLogger(JsonUtils.class);
-	 public static HashMap<String, JSONObject> fromJsonHashMap(String name, String inHashMap)  {
-		 HashMap<String, JSONObject> returned = new HashMap<String, JSONObject>();   
+	 public static Map<String, JSONObject> fromJsonHashMap(String name, String inHashMap)  {
+		 Map<String, JSONObject> returned = new HashMap<>();   
 		 try {
 		    	JSONObject obj = new JSONObject(inHashMap);
 			    JSONObject map = obj.getJSONObject(name);
@@ -23,7 +24,7 @@ public class JsonUtils {
 		  }
 	
 	@SuppressWarnings("unchecked")
-	  public static HashMap<String, JSONObject> fromJsonHashMap(JSONObject map) throws JSONException {
+	  public static Map<String, JSONObject> fromJsonHashMap(JSONObject map) throws JSONException {
 	    HashMap<String, JSONObject> returned = new HashMap<>();
 
 	    Iterator<String> it = map.keys();

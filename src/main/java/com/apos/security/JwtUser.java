@@ -74,17 +74,15 @@ public class JwtUser implements  UserDetails {
 
 	    this.id = sessionId;
 	    this.authorities = authorities;
-	    //this.group = group;
 	    this.username = usr.getName();
 	    this.password =  usr.getPassword();
 	    this.lastName = usr.getName();
 	    this.firstName =  usr.getName();
 	    this.email =  usr.getEmail();
 	    this.created = usr.getCreationDate();
-	    //this.rights = getUserRights(userJSONData);
-	    this.validityStartDate = new Date();//JsonUtil.getDateFromString(JsonUtil.getFielValue(userJSONData, "debut_validite_utilisateur"));
+	    this.validityStartDate = new Date();
 	    this.validityEndDate = new Date(2020, 1, 1);
-	    Date lastPwdResetDateTmp = null;//JsonUtil.getDateFromString(JsonUtil.getFielValue(userJSONData, "date_chgt_mot_pas"));
+	    Date lastPwdResetDateTmp = null;
 	    this.lastPwdResetDate = (lastPwdResetDateTmp != null) ? lastPwdResetDateTmp : created;
 	  
   }

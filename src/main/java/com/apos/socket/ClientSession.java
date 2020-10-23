@@ -8,6 +8,8 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import com.apos.rest.exceptions.SocketSendReceiveException;
+
 public class ClientSession {
 	public final static String  EOT                   = "\n";
 	private static final int _BLOBSTR_MSGLEN_SIZE_ = 7;
@@ -27,10 +29,10 @@ public class ClientSession {
 			initInputOutputStream(encoding);
 			this.isRuning=true;
 			
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			this.isRuning = false;
+			this._inStream = null;
+			this._outStream = null;
 		}
 	}
 
@@ -44,21 +46,19 @@ public class ClientSession {
 			
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	public void send(String str) throws Exception {
+	public void send(String str) throws SocketSendReceiveException {
 		if (_outStream == null)
-	      throw new Exception("IO ERROR : connection reset by peer");
+	      throw new SocketSendReceiveException("IO ERROR : connection reset by peer , outputstream is null");
 	    try {
-	      // send buffer next
 	      for (int ii = 0; ii < str.length(); ii++)
 	    	  _outStream.write((byte) str.charAt(ii));
-	      _outStream.flush(); // SEND buffer now
+	      _outStream.flush(); 
 
 	    } catch (IOException e) {
-	      throw new Exception("IO ERROR send : "+str+", exception: " + e.getMessage());
+	      throw new SocketSendReceiveException("IO ERROR send : "+str+", exception: " + e.getMessage());
 	    }
 	}
 	  /**
@@ -87,27 +87,30 @@ public class ClientSession {
 	    }
 
 	  }
-	public String receive() throws Exception {
+	public String receive() throws SocketSendReceiveException {
+		
+		if (_inStream == null) {
+		      throw new SocketSendReceiveException("IO ERROR :  input stream is null");
+		}
 		String result="";
-		if(_inStream !=null) {
-			int c = _inStream.read();
-			StringBuffer buff = new StringBuffer();
-			while(c>=0 && c!='\n') {
+		try {
+		int c = _inStream.read();
+		StringBuilder buff = new StringBuilder();
+		while(c>=0 && c!='\n') {
 				buff.append((char)c);
 				c = _inStream.read();
 			}
-			result = buff.toString();
+		result = buff.toString();
 			//The character read, as an integer in the range0 to 65535 (0x00-0xffff), 
 			//or -1 if the end of the stream has been reached
-			if(c==-1) {
-				if("".equals(result)) {
-					throw new Exception("the end of the stream has been reached: nothing received");
-				}
-			}
-			return result;
-		}else {
-			throw new Exception("IO Error");
+		if(c==-1 && "".equals(result)) {
+			throw new SocketSendReceiveException("the end of the stream has been reached: nothing received");
 		}
+		}catch(IOException ex) {
+			throw new SocketSendReceiveException("IOException,  exception : "+ex.getMessage());
+		}
+		return result;
+		
 	}
 	public void stop() {
 		try {
