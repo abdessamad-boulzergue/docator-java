@@ -1,5 +1,10 @@
 package com.apos.socket;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.apos.rest.exceptions.SocketSendReceiveException;
+
 public class ClientStub {
 
 	private static final String DEFAULT_ENCODING = "utf-8";
@@ -7,7 +12,7 @@ public class ClientStub {
 	private int port;
 	private String  encoding = DEFAULT_ENCODING;
 	private ClientSession session;
-	
+	Logger logger = LoggerFactory.getLogger(ClientStub.class);
 	public ClientStub(String host, int port,String encoding) {
 		this.port=port;
 		this.host=host;
@@ -40,22 +45,17 @@ public class ClientStub {
 		}
 	}
 	
-	public String sendAndWaitReceive(String str) {
+	public String sendAndWaitReceive(String str) throws SocketSendReceiveException {
 		synchronized(this.session) {
-			try {
 				if(!str.endsWith(ClientSession.EOT)) {
 					str=str.concat(ClientSession.EOT);
 				}
 				session.send(str);
 				return session.receive();
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		
 		}
-		return null;
 	}
-	public String marshall(String fx)  {
+	public String marshall(String fx) throws SocketSendReceiveException  {
 	    return sendAndWaitReceive(fx);
 	  }
 	public String sendAndReceiveBlob(String str) {

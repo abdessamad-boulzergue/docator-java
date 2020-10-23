@@ -26,7 +26,6 @@ implements Serializable {
   private String _resTypes = null;
 
   public PersistentPluginData( RemoteImageIcon icon ,
-                               RemoteImageIcon tinyIcon ,
                                String name ,
                                String description ,
                                int type ,
@@ -50,7 +49,7 @@ implements Serializable {
 	String className = null;
 	String pythonFileName = json.getString("name");
 	String resType = null;
-	return new PersistentPluginData(icon, null, name, description, type, className, pythonFileName, resType);
+	return new PersistentPluginData(icon, name, description, type, className, pythonFileName, resType);
   }
   public String getDescription() {
     return _description ;

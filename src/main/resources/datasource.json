@@ -1,0 +1,9 @@
+{
+  "sources": [
+        {   "id":"local_plugin_src",
+			"type":"socket",
+			"address":"127.0.0.1",
+			"port":"19902"
+		}
+  ]
+}

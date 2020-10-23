@@ -2,18 +2,18 @@ package com.apos.plugins;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apos.rest.exceptions.SocketSendReceiveException;
 import com.apos.socket.ClientStub;
 import com.apos.utils.JsonUtils;
-import com.apos.utils.SerializerException;
 import com.sefas.workflow.runtime.PersistentPluginData;
 
 public class PluginSocketLoader implements IPluginSource {
@@ -79,27 +79,35 @@ public class PluginSocketLoader implements IPluginSource {
 	}
 	String runCommand(String mth , List<Object> params) {
 		synchronized(stub) {
+			String result = "{}";
+		try {
 			stub.startSession();
 			stub.marshall("ALC");
 			stub.marshall("MTH ".concat(mth));
 			params.stream().forEach(param->{
-				if(param instanceof String) {
-					stub.marshall("DPRM args s");	
+				try {
+						if(param instanceof String) {
+							stub.marshall("DPRM args s");
+						}
+						else if(param instanceof Integer) {
+							stub.marshall("DPRM args d");	
+						}
+						stub.marshall("SPRM args = '".concat(String.valueOf(param)).concat("'"));
+				} catch (SocketSendReceiveException e) {
+					logger.error(e.getMessage());
 				}
-				else if(param instanceof Integer) {
-					stub.marshall("DPRM args d");	
-				}
-				stub.marshall("SPRM args = '".concat(String.valueOf(param)).concat("'"));
 			});
-			String result  = stub.marshall("CALL\n");
+			 result  = stub.marshall("CALL\n");
 			close();
-			try {
+			
 				return unmarshall(result);
-			} catch (UnmarshallException e) {
+				
+			} catch (UnmarshallException | SocketSendReceiveException e) {
 				logger.error(e.getMessage());
 			}
+
+	     return result;
 		}
-	     return null;
 		
 	}
 	public List<IPlugin> loadPluginsIn(String location){
@@ -108,7 +116,7 @@ public class PluginSocketLoader implements IPluginSource {
 			initContextWf();
 		}
 		String result = runCommand("loadPlugins",Arrays.asList(contextWf,location));
-		HashMap<String, JSONObject> remoteH = JsonUtils.fromJsonHashMap("plugins", result);
+		Map<String, JSONObject> remoteH = JsonUtils.fromJsonHashMap("plugins", result);
 		Iterator<String> it = remoteH.keySet().iterator();
 		List<IPlugin> plugins = new ArrayList<>();
 		while (it.hasNext()) {

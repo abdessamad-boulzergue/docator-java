@@ -12,6 +12,8 @@ import org.json.JSONObject;
 @Table(name = "users")
 public class User {
 
+	private static final String ROLE_ADMIN = "ADMIN";
+	
 	public User() {
 	}
 	public User(Long id, String username,String password) {
@@ -22,36 +24,23 @@ public class User {
 	@Id
 	private long id;
 	private String name;
-	private String description;
 	private String password;
-	private String mail;
-	private String phone;
-	private String CONTENT;
 	public  long getId() {
 		return id;
 	}
 	public  String getName() {
 		return name;
 	}
-	public  String getDescription() {
-		return description;
-	}
-
+	
 	public String getPassword() {
-		// TODO Auto-generated method stub
 		return password;
 	}
-	public String getEmail() {
-		// TODO Auto-generated method stub
-		return mail;
-	}
+	
 	public Date getCreationDate() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	public String getRole() {
-		// TODO Auto-generated method stub
-		return "ADMIN";
+		return ROLE_ADMIN;
 	}
 	  @Override
 		public String toString() {
@@ -61,4 +50,7 @@ public class User {
 			.put("password", password);
 			return obj.toString(1);
 		}
+	public String getEmail() {
+		return null;
+	}
 }

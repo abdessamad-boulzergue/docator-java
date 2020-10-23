@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,7 +28,7 @@ public class AuthenticationController {
 	
 	
 	@PostMapping(path ="login")
-	public ResponseEntity login(Credentials credential){
+	public ResponseEntity login(@RequestBody Credentials credential){
 		System.out.println(credential);
 		String username = credential.getUsername();
 		String password = credential.getPassword();
