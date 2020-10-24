@@ -79,7 +79,7 @@ public class PluginSocketLoader implements IPluginSource {
 	}
 	String runCommand(String mth , List<Object> params) {
 		synchronized(stub) {
-			String result = "{}";
+			String result = new String() ;
 		try {
 			stub.startSession();
 			stub.marshall("ALC");
@@ -116,16 +116,19 @@ public class PluginSocketLoader implements IPluginSource {
 			initContextWf();
 		}
 		String result = runCommand("loadPlugins",Arrays.asList(contextWf,location));
-		Map<String, JSONObject> remoteH = JsonUtils.fromJsonHashMap("plugins", result);
-		Iterator<String> it = remoteH.keySet().iterator();
 		List<IPlugin> plugins = new ArrayList<>();
-		while (it.hasNext()) {
-		        String pluginKey = it.next();
-		        JSONObject serialized = remoteH.get(pluginKey);		     
-		        PersistentPluginData dataInstance = RemoteShadowPlugin.deserializeInstance(serialized);
-		        plugins.add( new RemoteShadowPlugin( pluginKey, dataInstance));
-	      }
-			return plugins;
+
+		if(result!=null && !result.isEmpty()) {
+			Map<String, JSONObject> remoteH = JsonUtils.fromJsonHashMap("plugins", result);
+			Iterator<String> it = remoteH.keySet().iterator();
+			while (it.hasNext()) {
+			        String pluginKey = it.next();
+			        JSONObject serialized = remoteH.get(pluginKey);		     
+			        PersistentPluginData dataInstance = RemoteShadowPlugin.deserializeInstance(serialized);
+			        plugins.add( new RemoteShadowPlugin( pluginKey, dataInstance));
+		      }
+		}
+		return plugins;
 	}
 	@Override
 	public void init() {

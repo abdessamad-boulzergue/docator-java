@@ -15,8 +15,10 @@ public class JsonUtils {
 		 Map<String, JSONObject> returned = new HashMap<>();   
 		 try {
 		    	JSONObject obj = new JSONObject(inHashMap);
-			    JSONObject map = obj.getJSONObject(name);
-			    returned= fromJsonHashMap(map);
+		    	if(obj.has(name)) {
+				    JSONObject map = obj.getJSONObject(name);
+				    returned= fromJsonHashMap(map);
+		    	}
 			} catch (JSONException e) {
 				JsonUtils.logger.error(e.toString());
 			}
