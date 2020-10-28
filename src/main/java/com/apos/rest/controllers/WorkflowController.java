@@ -18,7 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.apos.models.Resource;
+import com.apos.models.ResourceType;
 import com.apos.resources.ResourceLoaderService;
+import com.apos.rest.controllers.service.ResourcesService;
 import com.apos.rest.dto.WorkflowData;
 
 @RestController
@@ -28,17 +31,18 @@ public class WorkflowController {
    Logger logger = LoggerFactory.getLogger(WorkflowController.class);
    
    @Autowired
+   ResourcesService resourceService; 
+   
+   @Autowired
    ResourceLoaderService resourceLoader;
    
    
    @GetMapping("/load")
    public ResponseEntity<String> load(@RequestParam(name="id") String id){
 	   String workflow=null;
-	try {
+	
 		workflow = resourceLoader.readResource(id);
-	} catch (IOException e) {
-		e.printStackTrace();
-	}
+	
 	return ResponseEntity.status(HttpStatus.OK).body(workflow );
    }
    
@@ -48,12 +52,27 @@ public class WorkflowController {
 		try {
 			
 			String content = URLDecoder.decode(workflowJson.getWorkflow(),"utf-8");
-			JSONArray json = new JSONArray(content);
-			JSONObject name = json.getJSONObject(1);
-			result =  resourceLoader.writeResource(name.getString("resdescid"), content);
 			
-			if(result == null || result.isEmpty()) {
-				 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("save failed") ; 
+			JSONArray json = new JSONArray(content);
+			JSONObject attributes = json.getJSONObject(1);
+			ResourceType type = resourceService.getType(ResourceType.TYPE_WORKFLOW);
+			Resource resource = Resource.from(attributes);
+			resource.setType(type);
+			Resource savedResource = resourceService.saveResource(resource);
+			if(savedResource!=null && savedResource.getId()>0) {
+			
+				String versionName = savedResource.getMaxVersion().getName();
+				attributes.put("version", versionName);
+				attributes.put("resdescid", String.valueOf(savedResource.getId()));
+				
+				result =  resourceLoader.writeResource(attributes.getString("resdescid"), json.toString());
+
+				if(result == null || result.isEmpty()) {
+					 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("save failed") ; 
+				}
+				
+			}else {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("save failed") ; 
 			}
 			
 		} catch (IOException e) {

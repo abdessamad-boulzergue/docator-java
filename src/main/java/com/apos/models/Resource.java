@@ -8,16 +8,20 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import org.json.JSONObject;
 
 
 @Entity
 @Table(name="resource")
 public class Resource {
 
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -33,7 +37,9 @@ public class Resource {
 	private List<ResourceVersion> versions;
 	
 	@NotNull
-	private Long typeId = 1L;
+	@ManyToOne
+	@JoinColumn(name="type_id")
+	private ResourceType type ;
 	
 	public Long getId() {
 		return id;
@@ -63,13 +69,13 @@ public class Resource {
 		this.versions = versions;
 	}
 
-	public Long getTypeId() {
-		return typeId;
+	public ResourceType getType() {
+		return type;
 	}
 
 
-	public void setTypeId(Long typeId) {
-		this.typeId = typeId;
+	public void setType(ResourceType type) {
+		this.type = type;
 	}
 
 	public ResourceVersion getMaxVersion() {
@@ -86,6 +92,30 @@ public class Resource {
 
 	public void setMaxVersion(ResourceVersion maxVersion) {
 		this.maxVersion = maxVersion;
+	}
+
+
+
+	public static Resource from(JSONObject attributes) {
+		Long id = Long.parseLong(attributes.getString("resdescid"));
+		String name = attributes.getString("name");
+		Resource res = new Resource();
+		res.setName(name);
+		res.setId(id);
+		return res;
+	}
+
+	public static ResourceType getResourceType(String type) {
+		
+			ResourceType restype =  new ResourceType();
+			restype.setName(type);
+			return restype;
+		
+		
+	}
+
+	private void setId(Long id) {
+	   this.id = id;
 	}
 	
 }
