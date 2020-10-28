@@ -6,8 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.apos.models.Resource;
+import com.apos.models.ResourceType;
 import com.apos.models.ResourceVersion;
+import com.apos.rest.exceptions.ResourceNotFoundException;
 import com.apos.rest.repo.ResourceRepo;
+import com.apos.rest.repo.ResourceTypeRepo;
 import com.apos.rest.repo.VersionRepo;
 
 @Service
@@ -18,6 +21,9 @@ public class ResourcesService {
 	
 	@Autowired
 	VersionRepo versionRepo;
+	
+	@Autowired
+	ResourceTypeRepo typesRepo;
 	
 	public Resource saveResource(Resource resource) {
 		
@@ -34,6 +40,7 @@ public class ResourcesService {
 		 
 		return savedResource;
 	}
+	
 	public List<ResourceVersion> getResourceVersion(Long resourceId){
 		return versionRepo.getResourceVersions(resourceId);
 	}
@@ -42,9 +49,43 @@ public class ResourcesService {
 		return versionRepo.getResourceMaxVersion(resourceId);
 	}
 
+	public ResourceType saveType(ResourceType type) throws Exception {
+		if(type!=null && type.hasName()) {
+			return typesRepo.save(type);
+		}
+		throw new Exception("Invalide Type");
+	}
 	public Resource get(Long id) {
 		
-		return resourceRepo.getOne(id);
+		Resource resource =  resourceRepo.findById(id).orElse(null);
+		if(resource ==null) {
+			throw new ResourceNotFoundException(id);
+		}
+		return resource;
+	}
+
+	public ResourceType getType(long id) {
+		ResourceType type =  typesRepo.findById(id).orElse(null);
+		if(type ==null) {
+			throw new ResourceNotFoundException("ResourceType" ,id);
+		}
+		return type;
+	}
+
+	public List<ResourceType> getTypes() {
+		return typesRepo.findAll();
+	}
+
+	public List<Resource> getResources() {
+		return resourceRepo.findAll();
+	}
+
+	public ResourceType getType(String typeName) {
+		ResourceType type = typesRepo.get(typeName);
+		if(type ==null) {
+			throw new ResourceNotFoundException(" ResourceType :" + typeName);
+		}
+		return type;
 	}
 	
 }

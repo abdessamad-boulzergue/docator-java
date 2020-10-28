@@ -1,16 +1,23 @@
 package com.apos;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import com.apos.models.Resource;
+import com.apos.models.ResourceType;
 import com.apos.models.ResourceVersion;
 import com.apos.rest.controllers.service.ResourcesService;
 import com.apos.rest.repo.ResourceRepo;
@@ -33,10 +40,29 @@ public class JpaRepoTest {
 	String versionName = ResourceVersion.DEFAULT_VERSION_NAME;
 	@Test
 	public void testResourceService() {
+		final ResourceType type1 = Resource.getResourceType(ResourceType.TYPE_PLUGIN);
 		
+			List<ResourceType> types = resourceService.getTypes().stream().filter((savedType)->{
+				return savedType.getName().equals(type1.getName());
+			}).collect(Collectors.toList());
+			
+				if(types.isEmpty()) {
+					assertDoesNotThrow(()->{
+						 resourceService.saveType(type1);
+					});
+				}else {
+				assertThrows(DataIntegrityViolationException.class, ()->{
+					 resourceService.saveType(type1);
+				});
+			}
+			 
+		final ResourceType type = resourceService.getTypes().stream().limit(1).findFirst().orElse(null);
+		assertNotNull(type);
 		Resource resource = new Resource();
 		resource.setName("resource testResourceService");
 		resource.setDescription("description fro resource testResourceService");
+		
+		resource.setType(type );
 		Resource savedResource = resourceService.saveResource(resource);
 	    assertEquals(ResourceVersion.DEFAULT_VERSION_NAME,savedResource.getMaxVersion().getName());
 		assertEquals(true, savedResource.getId()>0);
@@ -58,29 +84,5 @@ public class JpaRepoTest {
 
 	}
 	
-	@Test
-	public void testResourceRepo() {
-		
-		
-		Resource resource = new Resource();
-		resource.setName("resource 1");
-		resource.setDescription("description resource 1");
-		Resource savedResource = resourceRepo.save(resource );
-		assertEquals(true, savedResource.getId()>0);
-		
-		ResourceVersion version = new ResourceVersion();
-		version.setResource(savedResource);
-		ResourceVersion savedVersion = versionRepo.save(version);
-		assertEquals(true, savedVersion.getId()>0);
-		
-		version = new ResourceVersion();
-		version.setResource(savedResource);
-		 savedVersion = versionRepo.save(version);
-		assertEquals(true, savedVersion.getId()>0);
-		
-		savedResource.setMaxVersion(version);
-		resourceRepo.save(savedResource);
-		
-	}
 	
 }
