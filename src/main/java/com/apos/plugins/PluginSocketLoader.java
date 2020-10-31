@@ -1,10 +1,11 @@
 package com.apos.plugins;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.apos.rest.exceptions.SocketSendReceiveException;
 import com.apos.socket.ClientStub;
+import com.apos.utils.Base64;
 import com.apos.utils.JsonUtils;
 import com.sefas.workflow.runtime.PersistentPluginData;
 
@@ -26,11 +28,13 @@ public class PluginSocketLoader implements IPluginSource {
 	private Integer port;
 	private ClientStub stub;
 	String contextWf;
+	String uid =null;
 	private static Logger logger = LoggerFactory.getLogger(PluginSocketLoader.class);
 	public PluginSocketLoader(String host, Integer port) {
 		this.host=host;
 		this.port = port;
 	    stub = new ClientStub(this.host, this.port);
+	    this.uid = UUID.randomUUID().toString();
 	}
 	public void close() {
 		if(stub!=null)
@@ -40,12 +44,12 @@ public class PluginSocketLoader implements IPluginSource {
 
 		IPlugin plug =null;
 	    try {
-	      Iterator<IPlugin> it = getAll().iterator();
-	      while (it.hasNext()) {
-		        IPlugin plugin = it.next();
-		        if(plugin.getId().equals(key)) {
-		        	plug = plugin;
-		        	break;
+	    	Map<String, IPlugin> pluginsMap = getAll();
+	      Iterator<String> keys = pluginsMap.keySet().iterator();
+	      while (keys.hasNext()) {
+		        String mapKey = keys.next();
+		        if(mapKey.equals(key)) {
+		        	return pluginsMap.get(mapKey);
 		        }
 	      }
 	      
@@ -57,7 +61,7 @@ public class PluginSocketLoader implements IPluginSource {
 	}
 
 	@Override
-	public List<IPlugin> getAll() {
+	public Map<String, IPlugin> getAll() {
 		return loadPluginsIn("apos");
 	}
 	protected String unmarshall(String content) throws UnmarshallException {
@@ -110,22 +114,24 @@ public class PluginSocketLoader implements IPluginSource {
 		}
 		
 	}
-	public List<IPlugin> loadPluginsIn(String location){
+	public Map<String, IPlugin> loadPluginsIn(String location){
 		
 		if(this.contextWf==null || this.contextWf.trim().isEmpty()) {
 			initContextWf();
 		}
 		String result = runCommand("loadPlugins",Arrays.asList(contextWf,location));
-		List<IPlugin> plugins = new ArrayList<>();
+		Map<String,IPlugin> plugins = new HashMap<>();
 
 		if(result!=null && !result.isEmpty()) {
 			Map<String, JSONObject> remoteH = JsonUtils.fromJsonHashMap("plugins", result);
 			Iterator<String> it = remoteH.keySet().iterator();
 			while (it.hasNext()) {
 			        String pluginKey = it.next();
-			        JSONObject serialized = remoteH.get(pluginKey);		     
+			        String plugUID = this.uid.concat("-").concat(Base64.encode(pluginKey.getBytes()));
+			        JSONObject serialized = remoteH.get(pluginKey);	
+			        serialized.put("uid",plugUID );
 			        PersistentPluginData dataInstance = RemoteShadowPlugin.deserializeInstance(serialized);
-			        plugins.add( new RemoteShadowPlugin( pluginKey, dataInstance));
+			        plugins.put(plugUID, new RemoteShadowPlugin( pluginKey, dataInstance));
 		      }
 		}
 		return plugins;

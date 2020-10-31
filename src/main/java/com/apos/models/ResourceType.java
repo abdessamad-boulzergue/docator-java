@@ -53,5 +53,12 @@ public class ResourceType {
 		
 		return name!=null && !name.trim().isEmpty();
 	}
+	
+	@Override
+	public String toString() {
+		return "{"
+				+ "name: "+ this.name+
+	         "}";
+	}
 
 }

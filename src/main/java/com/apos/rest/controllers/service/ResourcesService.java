@@ -1,13 +1,19 @@
 package com.apos.rest.controllers.service;
 
+import java.io.IOException;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.apos.models.Resource;
 import com.apos.models.ResourceType;
 import com.apos.models.ResourceVersion;
+import com.apos.resources.ResourceLoaderService;
 import com.apos.rest.exceptions.ResourceNotFoundException;
 import com.apos.rest.repo.ResourceRepo;
 import com.apos.rest.repo.ResourceTypeRepo;
@@ -16,6 +22,9 @@ import com.apos.rest.repo.VersionRepo;
 @Service
 public class ResourcesService {
 
+	@Autowired
+	   ResourceLoaderService resourceLoader;
+	
 	@Autowired
 	ResourceRepo resourceRepo;
 	
@@ -27,7 +36,12 @@ public class ResourcesService {
 	
 	public Resource saveResource(Resource resource) {
 		
+		if(resource.getType().getId() == null) {
+			ResourceType type = typesRepo.get(resource.getType().getName());
+			resource.setType(type);
+		}
 		Resource savedResource = resourceRepo.save(resource);
+		
 		ResourceVersion currentVersion = new ResourceVersion();
 		ResourceVersion topVersion  = versionRepo.getResourceMaxVersion(savedResource.getId());
 		if(topVersion!=null) {
@@ -49,11 +63,11 @@ public class ResourcesService {
 		return versionRepo.getResourceMaxVersion(resourceId);
 	}
 
-	public ResourceType saveType(ResourceType type) throws Exception {
+	public ResourceType saveType(ResourceType type)  {
 		if(type!=null && type.hasName()) {
 			return typesRepo.save(type);
-		}
-		throw new Exception("Invalide Type");
+		}else
+		  throw new IllegalArgumentException("Invalide Type");
 	}
 	public Resource get(Long id) {
 		
@@ -82,10 +96,17 @@ public class ResourcesService {
 
 	public ResourceType getType(String typeName) {
 		ResourceType type = typesRepo.get(typeName);
-		if(type ==null) {
-			throw new ResourceNotFoundException(" ResourceType :" + typeName);
-		}
+		
 		return type;
+	}
+
+	public String writeResourceTofile(String fileName, String content)  {
+		
+		return resourceLoader.writeResource(fileName, content);
+	}
+
+	public String readResourceFromFile(String fileName) {
+		return resourceLoader.readResource(fileName);
 	}
 	
 }

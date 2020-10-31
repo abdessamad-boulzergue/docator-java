@@ -3,45 +3,28 @@ package com.apos;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Collection;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import com.apos.resources.ResourceLoaderService;
 import com.apos.utils.ResourceTools;
 
-@SpringBootTest(
-		webEnvironment = SpringBootTest.WebEnvironment.MOCK,
-		classes = AposApplication.class
-		)
-public class ResourceLoaderTests {
-
-	@Autowired
-	ResourceLoaderService resourceLoad;
-	@Test
-	void testResourceLoader() {
-		assertDoesNotThrow(()->{
-			String name = "2";
-			JSONArray content = ResourceTools.getStarterWorkflow();
-			resourceLoad.writeResource(name, content.toString());
-			String fileContent = resourceLoad.readResource(name);
-			assertEquals(content.toString(), fileContent);
-		});
-	}
+public class ResourceToolsTest {
 	
 	@Test
-	void generateAndSaveWorkflow() {
-
+	public void testDefaultWorkflow(){
+		
+		
 		JSONObject workflowAttrs = new JSONObject();
 		String  nameAttr = "name";
-		String  idAttr = "resdescid";
+		String  idAttr = "id";
 		String  nameValue = "workflow-1";
-		String  wfId="1";
+		String  id="1";
 		
 		workflowAttrs.put(nameAttr,nameValue );
-		workflowAttrs.put(idAttr,wfId );
+		workflowAttrs.put(idAttr,id );
 		assertDoesNotThrow(()->{
 			 ResourceTools.getEmptytWorflowJson(workflowAttrs );
 		});
@@ -49,23 +32,19 @@ public class ResourceLoaderTests {
 		JSONArray workflow  = ResourceTools.getEmptytWorflowJson(workflowAttrs );
 		
 		assertEquals(nameValue,ResourceTools.getAttribute(workflow, nameAttr));
-		assertEquals(wfId,ResourceTools.getAttribute(workflow, idAttr));
+		assertEquals(id,ResourceTools.getAttribute(workflow, idAttr));
 		assertEquals(ResourceTools.WF_REPOSITORY_WORKFLOW_TYPE, ResourceTools.getResourceType(workflow));
 		
-	
-		JSONArray activities = ResourceTools.getChildNodeOfType(workflow, ResourceTools.WF_ACTIVITIES_TYPE);
-		
-		assertEquals( ResourceTools.WF_ACTIVITIES_TYPE, ResourceTools.getResourceType(activities));
-		
+		JSONArray content = ResourceTools.getContent(workflow);
+		JSONArray activities = ResourceTools.getChildNodeOfType(content, ResourceTools.WF_ACTIVITIES_TYPE);
+
 		JSONObject extendedAttributes = new JSONObject();
-		nameAttr = "Name";
-		extendedAttributes.put("pointX", "165");
+		extendedAttributes.put("pointX", "135");
 		extendedAttributes.put("pointY", "60");
 
 		JSONObject attributes = new JSONObject();
-		nameValue = "Start";
+		nameValue = "act-1";
 		attributes.put(nameAttr, nameValue);
-		attributes.put("Id", 1111);
 		
 		JSONArray acti = ResourceTools.getDefaultActivity(extendedAttributes, attributes );
 		
@@ -80,13 +59,12 @@ public class ResourceLoaderTests {
 		
 			
 			extendedAttributes = new JSONObject();
-			extendedAttributes.put("pointX", "255");
-			extendedAttributes.put("pointY", "260");
+			extendedAttributes.put("pointX", "155");
+			extendedAttributes.put("pointY", "160");
 
 			attributes = new JSONObject();
-			nameValue = "End";
+			nameValue = "end-1";
 			attributes.put(nameAttr, nameValue);
-			attributes.put("Id", 2222);
 			
 			JSONArray endActivity =ResourceTools.getDefaultActivity(extendedAttributes, attributes );
 			    impAttrs = new JSONObject();
@@ -99,28 +77,5 @@ public class ResourceLoaderTests {
 			
 		assertEquals(nameValue,ResourceTools.getAttribute(endActivity, nameAttr));
 		
-		
-		
-		JSONArray transitions = ResourceTools.getChildNodeOfType(workflow, ResourceTools.WF_TRANSITIONS_TYPE);
-		assertEquals( ResourceTools.WF_TRANSITIONS_TYPE, ResourceTools.getResourceType(transitions));
-		
-		extendedAttributes = new JSONObject();
-		nameAttr = "Name";
-		extendedAttributes.put("pointX", "165");
-		extendedAttributes.put("pointY", "150");
-
-		attributes = new JSONObject();
-		nameValue = "act-1";
-		attributes.put(nameAttr, nameValue);
-		attributes.put("Id", "RT-1111-2222");
-		attributes.put("To", "2222");
-		attributes.put("From", "1111");
-		
-		JSONArray transition = ResourceTools.getDefaultTransition(extendedAttributes, attributes );
-		
-		ResourceTools.addChildren(transitions, transition);
-	
-		
 	}
-	
 }

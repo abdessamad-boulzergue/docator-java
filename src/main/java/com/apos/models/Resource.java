@@ -16,6 +16,8 @@ import javax.validation.constraints.NotNull;
 
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 
 @Entity
 @Table(name="resource")
@@ -27,6 +29,7 @@ public class Resource {
 	private Long id;
 	@NotNull
 	private String name;
+	
 	private String description;
 	
 	@OneToOne
@@ -97,7 +100,7 @@ public class Resource {
 
 
 	public static Resource from(JSONObject attributes) {
-		Long id = Long.parseLong(attributes.getString("resdescid"));
+		Long id = Long.parseLong(attributes.get("resdescid").toString());
 		String name = attributes.getString("name");
 		Resource res = new Resource();
 		res.setName(name);
@@ -116,6 +119,26 @@ public class Resource {
 
 	private void setId(Long id) {
 	   this.id = id;
+	}
+
+
+
+	public static Resource getWorkflowResource() {
+		Resource resource = new Resource();
+		resource.setName("New Workflow");
+		resource.setDescription("workflow");
+		resource.setType(Resource.getResourceType(ResourceType.TYPE_WORKFLOW));
+		return resource;
+	}
+
+
+
+	public JSONObject toJson() {
+		JSONObject obj = new JSONObject();
+		obj.put("resdescid", this.id);
+		obj.put("name", this.name);
+		obj.put("version", this.maxVersion.getName());
+		return obj;
 	}
 	
 }

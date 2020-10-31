@@ -24,14 +24,16 @@ implements Serializable {
   private String _className = null ;
   private String _pythonFileName = null ;
   private String _resTypes = null;
+  private String uid = null;
 
-  public PersistentPluginData( RemoteImageIcon icon ,
+  public PersistentPluginData( String uid ,RemoteImageIcon icon ,
                                String name ,
                                String description ,
                                int type ,
                                String className ,
                                String pythonFileName ,
                                String resType) {
+	  this.uid = uid;
     _icon = icon.getImageData() ;
     _name = name ;
     _description = description ;
@@ -44,12 +46,13 @@ implements Serializable {
 	  
 	RemoteImageIcon icon = new RemoteImageIcon(Base64.decode(json.getString("icon")));
 	String name = json.getString("name");
+	String uid = json.getString("uid");
 	String description = null;
 	int type = 0;
 	String className = null;
 	String pythonFileName = json.getString("name");
 	String resType = null;
-	return new PersistentPluginData(icon, name, description, type, className, pythonFileName, resType);
+	return new PersistentPluginData(uid,icon, name, description, type, className, pythonFileName, resType);
   }
   public String getDescription() {
     return _description ;
@@ -83,5 +86,8 @@ implements Serializable {
   }
   public String getDropResourceTypes() {
     return _resTypes;
+  }
+  public String getUId() {
+		return this.uid;
   }
 }

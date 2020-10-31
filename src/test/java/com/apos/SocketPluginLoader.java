@@ -3,7 +3,7 @@ package com.apos;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +16,7 @@ public class SocketPluginLoader {
 	void loadPlugins() {
 		PluginSocketLoader loader = new PluginSocketLoader("127.0.0.1", 19902);
 		loader.init();
-		List<IPlugin> plugs = loader.getAll();
+		Map<String, IPlugin> plugs = loader.getAll();
 		loader.close();
 		assertNotNull(plugs);
 		assertEquals(true, plugs.size()!=0);

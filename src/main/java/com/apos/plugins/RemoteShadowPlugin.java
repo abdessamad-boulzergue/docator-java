@@ -40,6 +40,10 @@ public class RemoteShadowPlugin implements IPlugin {
 	public String getId() {
 		return localIntance.getPythonFileName();
 	}
+	@Override
+	public String getUId() {
+		return localIntance.getUId();
+	}
 
 	public static PersistentPluginData deserializeInstance(JSONObject serialized) {
 		return  PersistentPluginData.fromJson(serialized);

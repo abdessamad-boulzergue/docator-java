@@ -5,4 +5,5 @@ public interface IPlugin {
 	public Object getIcon();
 	public String getType();
 	public String getId();
+	public String getUId();
 }
