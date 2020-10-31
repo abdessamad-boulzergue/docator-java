@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.apos.models.Resource;
 import com.apos.models.ResourceType;
-import com.apos.resources.ResourceLoaderService;
 import com.apos.rest.controllers.service.ResourcesService;
 import com.apos.rest.dto.WorkflowData;
+import com.apos.utils.ResourceTools;
 
 @RestController
 @CrossOrigin
@@ -33,19 +33,30 @@ public class WorkflowController {
    @Autowired
    ResourcesService resourceService; 
    
-   @Autowired
-   ResourceLoaderService resourceLoader;
-   
    
    @GetMapping("/load")
    public ResponseEntity<String> load(@RequestParam(name="id") String id){
 	   String workflow=null;
 	
-		workflow = resourceLoader.readResource(id);
+		workflow = resourceService.readResourceFromFile(id);
 	
 	return ResponseEntity.status(HttpStatus.OK).body(workflow );
    }
    
+	@PostMapping("/new")
+	public ResponseEntity<Resource> createWorkflow() {
+		
+		Resource resource =  Resource.getWorkflowResource();
+		Resource savedResource = resourceService.saveResource(resource );
+		
+		JSONArray content = ResourceTools.getStarterWorkflow(savedResource.toJson());
+		resourceService.writeResourceTofile(String.valueOf(savedResource.getId()), content.toString());
+		
+		resourceService.readResourceFromFile(String.valueOf(savedResource.getId()));
+		
+		return ResponseEntity.ok(savedResource);
+		
+	}
 	@PostMapping("/save")
 	public ResponseEntity<String> save(@RequestBody WorkflowData workflowJson) {
 		String result=null;
@@ -65,7 +76,7 @@ public class WorkflowController {
 				attributes.put("version", versionName);
 				attributes.put("resdescid", String.valueOf(savedResource.getId()));
 				
-				result =  resourceLoader.writeResource(attributes.getString("resdescid"), json.toString());
+				result =  resourceService.writeResourceTofile(attributes.getString("resdescid"), json.toString());
 
 				if(result == null || result.isEmpty()) {
 					 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("save failed") ; 

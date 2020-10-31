@@ -66,26 +66,32 @@ public class ResourceLoaderService  {
 		
 		return resultBuilder.toString();
 	}
-	   public String writeResource(String name,String content) throws IOException {
+	   public String writeResource(String name,String content) {
 		   return write(name, content);
 	   }
-	   private String write(String fileName, String content) throws IOException  {
+	   private String write(String fileName, String content)   {
 		   return write(fileName,content,DEFAULT_ENCODE);
 	   }
-	   private String write(String fileName, String content, String encode) throws IOException  {
+	   private String write(String fileName, String content, String encode)   {
 	    	File file = new File(configs.getResourcesPath(), fileName);
 	    	return write(file,content,encode);
 	    }
 	   
-	    private String write(File file, String content, String encode) throws IOException  {
+	    private String write(File file, String content, String encode)   {
 		
-		OutputStream out = new FileOutputStream(file);
-	
-		try(
-				BufferedWriter  writer = new BufferedWriter(new OutputStreamWriter(out,encode))
-			) {
-			
-			writer.write(content);
+		
+		try {
+			try(
+					OutputStream out = new FileOutputStream(file);
+					BufferedWriter  writer = new BufferedWriter(new OutputStreamWriter(out,encode))
+				) {
+				
+				writer.write(content);
+			}
+		}
+		catch (IOException e) {
+			logger.error("access failed, file : {} , exception : {}", file.getAbsolutePath() , e.getMessage());
+			throw new ResourceAccessException("could not access file : "+file.getName());
 		}
 		return file.getAbsolutePath();
 	}

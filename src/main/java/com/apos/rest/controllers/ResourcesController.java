@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.apos.models.Resource;
 import com.apos.models.ResourceType;
 import com.apos.rest.controllers.service.ResourcesService;
+import com.apos.rest.validator.AposValidator;
+import com.apos.rest.validator.ValidatorFactory;
 
 @RestController
 @RequestMapping("/resource")
@@ -24,6 +28,8 @@ public class ResourcesController {
 
 	@Autowired
 	ResourcesService resourceService;
+	
+	ValidatorFactory validatorFactory = new  ValidatorFactory();
 	
 	@GetMapping("/type")
 	public ResponseEntity<Object> getType(@RequestParam("id") String id){
@@ -69,9 +75,19 @@ public class ResourcesController {
 				
 			} catch (NumberFormatException  e) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-			}catch (EntityNotFoundException   e) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Resource not found with id : "+id);
 			}		
 	   }
+	
+	@PostMapping
+	public ResponseEntity<Object> saveResource(@RequestBody Resource resource){
+		
+		    AposValidator<Resource> validator = validatorFactory.getValidator(Resource.class);
+		    validator.validate(resource);
+		    
+			Resource savedResource = resourceService.saveResource(resource);
+			return ResponseEntity.status(HttpStatus.OK).body(savedResource);
+			
+		
+	}
 	
 }

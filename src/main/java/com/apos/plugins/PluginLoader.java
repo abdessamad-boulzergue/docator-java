@@ -20,7 +20,7 @@ public class PluginLoader implements IPluginLoad{
 	@Autowired
 	@Qualifier("PluginDatasource")
 	JsonNode pluginDatasource;
-    
+	Map<String, IPlugin> plugins = new HashMap();
 	
     Map<String, IPluginSource> sources = new HashMap<>();
     
@@ -35,12 +35,8 @@ public class PluginLoader implements IPluginLoad{
 	@Override
 	public IPlugin load(String key) {
 		
-		IPluginSource plugSrc = getSource("src1");
-		IPlugin plug=null;
-		if(plugSrc!=null) {
-			plug  = plugSrc.get(key);
-		}
-		return plug;
+		
+		return plugins.get(key);
 		
 	}
 	
@@ -63,12 +59,16 @@ public class PluginLoader implements IPluginLoad{
 	}
 	@Override
 	public List<IPlugin> load() {
-		List<IPlugin> plugins = new ArrayList<>();
+		
 		sources.forEach((key,src)->{
-			plugins.addAll( src.getAll() );
+			plugins.putAll( src.getAll());
 		});
 	
-		return plugins;
+		List<IPlugin> returns = new ArrayList<IPlugin>();
+		plugins.forEach((uid, plug)->{
+			returns.add(plug);
+		});
+		return returns;
 	}
 
 }
