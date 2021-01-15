@@ -1,8 +1,11 @@
 package com.apos.socket;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apos.plugins.UnmarshallException;
 import com.apos.rest.exceptions.SocketSendReceiveException;
 
 public class ClientStub {
@@ -13,6 +16,10 @@ public class ClientStub {
 	private String  encoding = DEFAULT_ENCODING;
 	private ClientSession session;
 	Logger logger = LoggerFactory.getLogger(ClientStub.class);
+	
+	private static final  String RETOK = "<OK>";
+    private static final  String ENDRETOK = "</OK>";
+	
 	public ClientStub(String host, int port,String encoding) {
 		this.port=port;
 		this.host=host;
@@ -73,5 +80,47 @@ public class ClientStub {
 		}
 		return null;
 	}
+	public String runCommand(String mth, List<Object> params)  {
+
+		String result ="";
+		try {
+			marshall("ALC");
+			marshall("MTH ".concat(mth));
+
+		
+		params.stream().forEach(param->{
+			try {
+					if(param instanceof String) {
+						marshall("DPRM args s");
+					}
+					else if(param instanceof Integer) {
+						marshall("DPRM args d");	
+					}
+					marshall("SPRM args = '".concat(String.valueOf(param)).concat("'"));
+			} catch (SocketSendReceiveException e) {
+				logger.error(e.getMessage());
+			}
+		});
+		 result  =   marshall("CALL\n");
+		 return unmarshall(result);
+		} catch (SocketSendReceiveException e1) {
+			logger.error(e1.getMessage());
+		} catch (UnmarshallException e) {
+			logger.error(e.getMessage());
+		}
+		return result;
+	}
 	
+	protected String unmarshall(String content) throws UnmarshallException {
+	    int whereRet = content.indexOf(RETOK);
+
+	    if (whereRet == -1) {
+	      throw new UnmarshallException(" failed : " +content);
+	    }
+
+	    int whereEndRet = content.indexOf(ENDRETOK);
+	    int start = whereRet + RETOK.length();
+
+	    return content.substring(start, whereEndRet);
+	  }
 }
