@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class PluginLoader implements IPluginLoad{
 	
 	@Autowired
-	@Qualifier("PluginDatasource")
+	@Qualifier("workflow_connection")
 	JsonNode pluginDatasource;
 	Map<String, IPlugin> plugins = new HashMap();
 	
@@ -43,17 +43,13 @@ public class PluginLoader implements IPluginLoad{
 	@Override
 	@PostConstruct
 	public void init() {
-		JsonNode sourcesNode = pluginDatasource.get("sources");
-		Iterator<JsonNode> sourceIter = sourcesNode.elements();
-		sourceIter.forEachRemaining(src->{
+		JsonNode src = pluginDatasource.get("workflow_server");
 		
 			String id = src.get("id").asText();
 			String host = src.get("address").asText();
 			Integer port = Integer.valueOf(src.get("port").asText());
 			
 			sources.put(id, new PluginSocketLoader(host, port ));
-			
-		});
 		
 
 	}
