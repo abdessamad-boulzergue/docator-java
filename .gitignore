@@ -34,3 +34,5 @@ out/
 ### JAVA BUILD ###
 /bin/
 
+
+/src/main/resources/*
