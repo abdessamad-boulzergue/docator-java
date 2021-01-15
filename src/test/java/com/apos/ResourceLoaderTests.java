@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.apos.resources.ResourceLoaderService;
 import com.apos.utils.ResourceTools;
+import com.apos.utils.WorkflowResourceTools;
 
 @SpringBootTest(
 		webEnvironment = SpringBootTest.WebEnvironment.MOCK,
@@ -24,7 +25,7 @@ public class ResourceLoaderTests {
 	void testResourceLoader() {
 		assertDoesNotThrow(()->{
 			String name = "2";
-			JSONArray content = ResourceTools.getStarterWorkflow();
+			JSONArray content = WorkflowResourceTools.getStarterWorkflow();
 			resourceLoad.writeResource(name, content.toString());
 			String fileContent = resourceLoad.readResource(name);
 			assertEquals(content.toString(), fileContent);
@@ -43,10 +44,10 @@ public class ResourceLoaderTests {
 		workflowAttrs.put(nameAttr,nameValue );
 		workflowAttrs.put(idAttr,wfId );
 		assertDoesNotThrow(()->{
-			 ResourceTools.getEmptytWorflowJson(workflowAttrs );
+			WorkflowResourceTools.getEmptytWorflowJson(workflowAttrs );
 		});
 		
-		JSONArray workflow  = ResourceTools.getEmptytWorflowJson(workflowAttrs );
+		JSONArray workflow  = WorkflowResourceTools.getEmptytWorflowJson(workflowAttrs );
 		
 		assertEquals(nameValue,ResourceTools.getAttribute(workflow, nameAttr));
 		assertEquals(wfId,ResourceTools.getAttribute(workflow, idAttr));
@@ -67,7 +68,7 @@ public class ResourceLoaderTests {
 		attributes.put(nameAttr, nameValue);
 		attributes.put("Id", 1111);
 		
-		JSONArray acti = ResourceTools.getDefaultActivity(extendedAttributes, attributes );
+		JSONArray acti = WorkflowResourceTools.getDefaultActivity(extendedAttributes, attributes );
 		
 		ResourceTools.addChildren(activities, acti);
 		
@@ -88,7 +89,7 @@ public class ResourceLoaderTests {
 			attributes.put(nameAttr, nameValue);
 			attributes.put("Id", 2222);
 			
-			JSONArray endActivity =ResourceTools.getDefaultActivity(extendedAttributes, attributes );
+			JSONArray endActivity =WorkflowResourceTools.getDefaultActivity(extendedAttributes, attributes );
 			    impAttrs = new JSONObject();
 		        impAttrs.put("Type","APPLICATION");
 				extAttrs = new JSONObject();
@@ -116,7 +117,7 @@ public class ResourceLoaderTests {
 		attributes.put("To", "2222");
 		attributes.put("From", "1111");
 		
-		JSONArray transition = ResourceTools.getDefaultTransition(extendedAttributes, attributes );
+		JSONArray transition = WorkflowResourceTools.getDefaultTransition(extendedAttributes, attributes );
 		
 		ResourceTools.addChildren(transitions, transition);
 	

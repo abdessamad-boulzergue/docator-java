@@ -20,6 +20,9 @@ public class GeneralConfigs {
 	@Value("${project.resources}")
 	private String resourcesPath;
 	
+	@Value("${actions.definitionPath}")
+	private String actionsDefinitionPath;
+
 	@Bean(name="PluginDatasource")
 	public JsonNode getPluginDatasource() throws JsonProcessingException, IOException  {
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -30,5 +33,8 @@ public class GeneralConfigs {
 	
 	public String getResourcesPath() {
 		return this.resourcesPath;
+	}
+	public String getActionsDefinitionPath() {
+		return this.actionsDefinitionPath;
 	}
 }

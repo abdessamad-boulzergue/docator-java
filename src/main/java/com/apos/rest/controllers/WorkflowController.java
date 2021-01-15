@@ -22,7 +22,8 @@ import com.apos.models.Resource;
 import com.apos.models.ResourceType;
 import com.apos.rest.controllers.service.ResourcesService;
 import com.apos.rest.dto.WorkflowData;
-import com.apos.utils.ResourceTools;
+import com.apos.utils.WorkflowResourceTools;
+import com.apos.workflow.remote.WorkflowRemote;
 
 @RestController
 @CrossOrigin
@@ -33,14 +34,24 @@ public class WorkflowController {
    @Autowired
    ResourcesService resourceService; 
    
-   
+   @Autowired
+   WorkflowRemote wfRemoteService; 
+    
    @GetMapping("/load")
    public ResponseEntity<String> load(@RequestParam(name="id") String id){
-	   String workflow=null;
-	
-		workflow = resourceService.readResourceFromFile(id);
+	   String workflow = resourceService.readResourceFromFile(id);
 	
 	return ResponseEntity.status(HttpStatus.OK).body(workflow );
+   }
+ 
+    
+   @PostMapping("/run")
+   public ResponseEntity<String> run(@RequestParam(name="workflowId") String workflowId){
+	   
+	   wfRemoteService.startWorkflow();
+	   
+	   return ResponseEntity.status(HttpStatus.OK).body("OK");
+	   
    }
    
 	@PostMapping("/new")
@@ -49,7 +60,7 @@ public class WorkflowController {
 		Resource resource =  Resource.getWorkflowResource();
 		Resource savedResource = resourceService.saveResource(resource );
 		
-		JSONArray content = ResourceTools.getStarterWorkflow(savedResource.toJson());
+		JSONArray content = WorkflowResourceTools.getStarterWorkflow(savedResource.toJson());
 		resourceService.writeResourceTofile(String.valueOf(savedResource.getId()), content.toString());
 		
 		resourceService.readResourceFromFile(String.valueOf(savedResource.getId()));

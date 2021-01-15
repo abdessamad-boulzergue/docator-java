@@ -3,13 +3,12 @@ package com.apos;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Collection;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
 import com.apos.utils.ResourceTools;
+import com.apos.utils.WorkflowResourceTools;
 
 public class ResourceToolsTest {
 	
@@ -26,10 +25,10 @@ public class ResourceToolsTest {
 		workflowAttrs.put(nameAttr,nameValue );
 		workflowAttrs.put(idAttr,id );
 		assertDoesNotThrow(()->{
-			 ResourceTools.getEmptytWorflowJson(workflowAttrs );
+			WorkflowResourceTools.getEmptytWorflowJson(workflowAttrs );
 		});
 		
-		JSONArray workflow  = ResourceTools.getEmptytWorflowJson(workflowAttrs );
+		JSONArray workflow  = WorkflowResourceTools.getEmptytWorflowJson(workflowAttrs );
 		
 		assertEquals(nameValue,ResourceTools.getAttribute(workflow, nameAttr));
 		assertEquals(id,ResourceTools.getAttribute(workflow, idAttr));
@@ -46,7 +45,7 @@ public class ResourceToolsTest {
 		nameValue = "act-1";
 		attributes.put(nameAttr, nameValue);
 		
-		JSONArray acti = ResourceTools.getDefaultActivity(extendedAttributes, attributes );
+		JSONArray acti = WorkflowResourceTools.getDefaultActivity(extendedAttributes, attributes );
 		
 		ResourceTools.addChildren(activities, acti);
 		
@@ -66,7 +65,7 @@ public class ResourceToolsTest {
 			nameValue = "end-1";
 			attributes.put(nameAttr, nameValue);
 			
-			JSONArray endActivity =ResourceTools.getDefaultActivity(extendedAttributes, attributes );
+			JSONArray endActivity =WorkflowResourceTools.getDefaultActivity(extendedAttributes, attributes );
 			    impAttrs = new JSONObject();
 		        impAttrs.put("Type","APPLICATION");
 				extAttrs = new JSONObject();

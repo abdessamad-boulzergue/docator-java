@@ -29,155 +29,23 @@ public class ResourceTools {
     public static final String WF_XPDL_PACKAGE_TYPE = "xpdl:Package";
     public static final String WF_XPDL_WORKFLOW_PROCESSES_TYPE = "xpdl:WorkflowProcesses";
     public static final String WF_XPDL_WORKFLOW_PROCESS_TYPE = "xpdl:WorkflowProcess";
-	private static final String pointX_START = "250";
-	private static final String pointY_START = "50";
+	protected static final String pointX_START = "250";
+	protected static final String pointY_START = "50";
 	
-	private static final String pointX_TRANSITION = "250";
-	private static final String pointY_TRANSITION = "150";
+	protected static final String pointX_TRANSITION = "250";
+	protected static final String pointY_TRANSITION = "150";
 	
-	private static final String pointX_END = "300";
-	private static final String pointY_END = "250";
-	private static final String START_ACTIVITY_NAME = "Start";
+	protected static final String pointX_END = "300";
+	protected static final String pointY_END = "250";
+	protected static final String START_ACTIVITY_NAME = "Start";
+	public static final String ATTR_NAME = "name";
+    public static final String ATTR_RESDESC_ID = "resourceId";
+    public static final String ATTR_ID = "Id";
+    public static final String POINT_X = "pointX";
+    public static final String POINT_Y = "pointY";
     
+	public final static String WF_REPOSITORY_WORKFLOW_JOB_CONFIG  = "repository:WorkflowJobConfiguration";
     
-    public static JSONArray  getDefaultTransition(JSONObject extendedAttributes, JSONObject attributes){
-    	JSONArray transitionNode = createBasicElement(WF_TRANSITION_TYPE);
-        setAttributes(transitionNode,attributes);
-
-        JSONArray descriptionNode = createBasicElement(WF_Description_TYPE);
-
-        JSONArray extendAttrsNode = createBasicElement(WF_ExtendedAttributes_TYPE);
-        setAttributes(extendAttrsNode,extendedAttributes);
-
-
-        addChildren(transitionNode, descriptionNode);
-        addChildren(transitionNode, extendAttrsNode);
-        return transitionNode;
-    }
-    
-    public static JSONArray getDefaultActivity(JSONObject extendedAttributes, JSONObject attributes){
-
-    	JSONArray activityNode = createBasicElement(WF_ACTIVITY_TYPE);
-        setAttributes(activityNode,attributes);
-
-        JSONArray descriptionNode = createBasicElement(WF_Description_TYPE);
-
-        JSONArray extendAttrsNode = createBasicElement(WF_ExtendedAttributes_TYPE);
-        setAttributes(extendAttrsNode,extendedAttributes);
-
-        addChildren(activityNode, descriptionNode);
-        addChildren(activityNode, extendAttrsNode);
-     
-        return activityNode;
-    }
-    
-    public static JSONArray getStarterWorkflow() {
-    	
-    	JSONObject workflowAttrs = new JSONObject();
-    	String  nameAttr = "name";
-		String  idAttr = "resdescid";
-		String  nameValue = "new workflow";
-		String  wfId="-1";
-		workflowAttrs.put(nameAttr,nameValue );
-		workflowAttrs.put(idAttr,wfId );
-		return getStarterWorkflow(workflowAttrs);
-    }
-    	public static JSONArray getStarterWorkflow(JSONObject workflowAttrs) {
-    	
-    		if(!workflowAttrs.has("resdescid")) {
-    			throw new IllegalArgumentException("workflow attributes missing : resdescid");
-    		}
-		
-		JSONArray workflow  = ResourceTools.getEmptytWorflowJson(workflowAttrs );
-	
-		JSONArray activities = ResourceTools.getChildNodeOfType(workflow, ResourceTools.WF_ACTIVITIES_TYPE);
-		
-		JSONObject extendedAttributes = new JSONObject();
-		 String nameAttr = "Name";
-		extendedAttributes.put("pointX", pointX_START);
-		extendedAttributes.put("pointY", pointY_START);
-
-		JSONObject attributes = new JSONObject();
-		attributes.put(nameAttr, START_ACTIVITY_NAME);
-		attributes.put("Id", UUID.randomUUID().toString());
-		
-		JSONArray startActivity = ResourceTools.getDefaultActivity(extendedAttributes, attributes );
-		
-		ResourceTools.addChildren(activities, startActivity);
-		
-		   JSONArray activity = ResourceTools.getChildNodeOfType(workflow, ResourceTools.WF_ACTIVITY_TYPE); 
-		      JSONObject impAttrs = new JSONObject();
-	          impAttrs.put("Type","APPLICATION");
-			  JSONObject extAttrs = new JSONObject();
-			  extAttrs.put("pluginJava","com.sefas.workflow.plugins.java.StartingNode");
-			ResourceTools.addChildren(activity, ResourceTools.getDefaultImplementation(extAttrs , impAttrs ));
-		
-			
-			extendedAttributes = new JSONObject();
-			extendedAttributes.put("pointX", pointX_END);
-			extendedAttributes.put("pointY", pointY_END);
-
-			attributes = new JSONObject();
-			attributes.put(nameAttr, "End");
-			attributes.put("Id", UUID.randomUUID().toString());
-			
-			JSONArray endActivity =ResourceTools.getDefaultActivity(extendedAttributes, attributes );
-			    impAttrs = new JSONObject();
-		        impAttrs.put("Type","APPLICATION");
-				extAttrs = new JSONObject();
-				extAttrs.put("pluginJava","com.sefas.workflow.plugins.java.EndingNode");
-				ResourceTools.addChildren(endActivity, ResourceTools.getDefaultImplementation(extAttrs , impAttrs ));
-			ResourceTools.addChildren(activities, endActivity);
-
-			
-		
-		
-		
-		JSONArray transitions = ResourceTools.getChildNodeOfType(workflow, ResourceTools.WF_TRANSITIONS_TYPE);
-		
-		extendedAttributes = new JSONObject();
-		nameAttr = "Name";
-		extendedAttributes.put("pointX", pointX_TRANSITION);
-		extendedAttributes.put("pointY", pointY_TRANSITION);
-
-		attributes = new JSONObject();
-		String nameValue = "act-1";
-		attributes.put(nameAttr, nameValue);
-		attributes.put("Id", UUID.randomUUID().toString());
-		attributes.put("To", getAttribute(endActivity, "Id"));
-		attributes.put("From", getAttribute(startActivity, "Id"));
-		
-		JSONArray transition = ResourceTools.getDefaultTransition(extendedAttributes, attributes );
-		
-		ResourceTools.addChildren(transitions, transition);
-		return workflow;
-    }
-    
-	public static JSONArray getEmptytWorflowJson(JSONObject workflowAttrs ) {
-
-
-		JSONArray workflowNode = createBasicElement(WF_REPOSITORY_WORKFLOW_TYPE,true);
-		setAttributes(workflowNode,workflowAttrs);
-		JSONArray content = getContent(workflowNode);
-		
-		JSONArray xpdlNode = createBasicElement(WF_XPDL_TYPE);
-		JSONArray xpdlPackageNode = createBasicElement(WF_XPDL_PACKAGE_TYPE);
-		JSONArray xpdlProcessesNode = createBasicElement(WF_XPDL_WORKFLOW_PROCESSES_TYPE);
-		JSONArray xpdlProcessNode = createBasicElement(WF_XPDL_WORKFLOW_PROCESS_TYPE);
-		JSONArray activitiesNode = createBasicElement(WF_ACTIVITIES_TYPE);
-		JSONArray transitionsNode = createBasicElement(WF_TRANSITIONS_TYPE);
-
-		addChildren(xpdlProcessNode,activitiesNode);
-        addChildren(xpdlProcessNode, transitionsNode);
-        addChildren(xpdlProcessesNode, xpdlProcessNode);
-        addChildren(xpdlPackageNode, xpdlProcessesNode);
-        addChildren(xpdlNode, xpdlPackageNode);
-
-        addChildren(content, xpdlNode);
-
-		return workflowNode;
-	}
-
 	
 	public static JSONArray getContent(JSONArray basicElement) {
 		return getChildNodeOfType(basicElement, CONTENT);
@@ -295,5 +163,12 @@ public class ResourceTools {
 		
         return basicElement;
 	}
+		
+		public static JSONObject getAttributes(JSONArray resource) {
+			if (!isBasicElement(resource)) {
+				throw new IllegalArgumentException("resource is not a basic element [_name_ , {_attributes_} , [_content_] ]") ;
+			}
+			return (JSONObject) resource.get(INDEX_ATTRIBUTES);
+		}
 	
 }

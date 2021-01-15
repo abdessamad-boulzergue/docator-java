@@ -12,12 +12,15 @@ public class FileUtils {
 	private static final String ENCODING_UTF8 = "utf-8";
 
 	public static String readFile(File file) {
+		return readFile(file,ENCODING_UTF8);
+	}
+		public static String readFile(File file,String encode) {
 
 		String content=null;
 		try {
 			
 			byte[] fileBytes = readBytes(file);
-			content = new String(fileBytes,ENCODING_UTF8);
+			content = new String(fileBytes,encode);
 			 
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
