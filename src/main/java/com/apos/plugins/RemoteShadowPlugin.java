@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 import com.apos.utils.DataSerializer;
 import com.apos.utils.SerializerException;
-import com.sefas.workflow.runtime.PersistentPluginData;
+import com.apos.workflow.runtime.PersistentPluginData;
 
 public class RemoteShadowPlugin implements IPlugin {
 
