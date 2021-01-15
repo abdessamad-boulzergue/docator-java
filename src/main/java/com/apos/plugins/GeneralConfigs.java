@@ -23,7 +23,7 @@ public class GeneralConfigs {
 	@Value("${actions.definitionPath}")
 	private String actionsDefinitionPath;
 
-	@Bean(name="PluginDatasource")
+	@Bean(name="workflow_connection")
 	public JsonNode getPluginDatasource() throws JsonProcessingException, IOException  {
 		ObjectMapper objectMapper = new ObjectMapper();
 		File file = new File(location);
