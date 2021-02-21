@@ -14,10 +14,9 @@ public class ResourceTools {
 	public static final int INDEX_CHILDREN = 2;
 
 	public static final String CONTENT = "CONTENT";
-
-	 public final static String WF_REPOSITORY_WORKFLOW_TYPE  = "repository:Workflow";
-	 public static final String WF_Description_TYPE = "xpdl:Description";
-	 public static final String  WF_ExtendedAttributes_TYPE = "xpdl:ExtendedAttributes";
+	public final static String WF_REPOSITORY_WORKFLOW_TYPE  = "repository:Workflow";
+	public static final String WF_Description_TYPE = "xpdl:Description";
+	public static final String  WF_ExtendedAttributes_TYPE = "xpdl:ExtendedAttributes";
 	public static final String WF_Implementation_TYPE = "xpdl:Implementation";
 	public static final String WF_Tool_TYPE = "xpdl:Tool";
 	public static final String WF_ACTIVITIES_TYPE = "xpdl:Activities";
@@ -41,6 +40,8 @@ public class ResourceTools {
 	public static final String ATTR_NAME = "name";
     public static final String ATTR_RESDESC_ID = "resourceId";
     public static final String ATTR_ID = "Id";
+	public static final String ATTR_TYPE = "Type";
+
     public static final String POINT_X = "pointX";
     public static final String POINT_Y = "pointY";
     

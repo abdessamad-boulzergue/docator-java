@@ -1,0 +1,1 @@
+xcopy D:\sefas\master\apos\build\libs\apos.war C:\Apos\Docator\tomcat\webapps /i /d /y /s /e

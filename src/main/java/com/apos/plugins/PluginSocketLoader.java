@@ -30,11 +30,11 @@ public class PluginSocketLoader implements IPluginSource {
 		this.stub = stub;
 	    this.uid  = UUID.randomUUID().toString();
 	}
-		public PluginSocketLoader(String host, Integer port) {
+		public PluginSocketLoader(String id, String host, Integer port) {
 		this.host = host;
 		this.port = port;
 	    this.stub = new ClientStub(this.host, this.port);
-	    this.uid  = UUID.randomUUID().toString();
+	    this.uid  = id;//UUID.randomUUID().toString();
 	}
 	public void close() {
 		if(stub!=null)
@@ -66,12 +66,12 @@ public class PluginSocketLoader implements IPluginSource {
 	}
 	
 	
-	public void initContextWf(){
+	public String initContextWf(){
 		if(this.contextWf==null || this.contextWf.trim().isEmpty()) {
 			contextWf  = runCommand("initContext",Arrays.asList());
 			logger.debug(contextWf);
 		}
-		
+		return this.contextWf;
 	}
 	String runCommand(String mth , List<Object> params) {
 		synchronized(stub) {
@@ -97,11 +97,13 @@ public class PluginSocketLoader implements IPluginSource {
 			Iterator<String> it = remoteH.keySet().iterator();
 			while (it.hasNext()) {
 			        String pluginKey = it.next();
-			        String plugUID = this.uid.concat("-").concat(Base64.encode(pluginKey.getBytes()));
+			        String plugUID = pluginKey; //this.uid.concat("-").concat(Base64.encode(pluginKey.getBytes()));
 			        JSONObject serialized = remoteH.get(pluginKey);	
 			        serialized.put("uid",plugUID );
 			        PersistentPluginData dataInstance = RemoteShadowPlugin.deserializeInstance(serialized);
-			        plugins.put(plugUID, new RemoteShadowPlugin( pluginKey, dataInstance));
+			        RemoteShadowPlugin plugin = new RemoteShadowPlugin( pluginKey, dataInstance);
+			        plugin.setPluginSource(stub);
+			        plugins.put(plugUID, plugin);
 		      }
 		}
 		return plugins;
@@ -110,8 +112,8 @@ public class PluginSocketLoader implements IPluginSource {
 	
 	
 	@Override
-	public void init() {
-		initContextWf();
+	public String init() {
+		return initContextWf();
 	}
 
 }

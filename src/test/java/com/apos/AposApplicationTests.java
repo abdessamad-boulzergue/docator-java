@@ -84,9 +84,9 @@ class AposApplicationTests {
 				
 				assertEquals(true, src.has("type"));
 				assertEquals(true, src.has("id"));
-				assertEquals(false, src.get("id").asText("").isEmpty());
-				assertEquals(false, src.get("type").asText("").isEmpty());
-				if(src.get("type").asText("").equals("socket")) {
+				assertEquals(false, src.get("id").asText().isEmpty());
+				assertEquals(false, src.get("type").asText().isEmpty());
+				if(src.get("type").asText().equals("socket")) {
 					assertEquals(true, src.has("address"));
 					assertEquals(true, src.has("port"));
 					assertDoesNotThrow(()->{

@@ -1,5 +1,6 @@
 package com.apos.socket;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -16,8 +17,10 @@ public class ClientStub {
 	private String  encoding = DEFAULT_ENCODING;
 	private ClientSession session;
 	Logger logger = LoggerFactory.getLogger(ClientStub.class);
-	
+	String runningCtx=null;
 	private static final  String RETOK = "<OK>";
+	private static final  String RET_ERROR = "<ERROR>";
+	private static final  String ENDRET_ERROR = "</ERROR>";
     private static final  String ENDRETOK = "</OK>";
 	
 	public ClientStub(String host, int port,String encoding) {
@@ -115,7 +118,17 @@ public class ClientStub {
 	    int whereRet = content.indexOf(RETOK);
 
 	    if (whereRet == -1) {
-	      throw new UnmarshallException(" failed : " +content);
+		    int whereEndRet = content.indexOf(ENDRETOK);
+		    if(whereEndRet==-1) {
+			    int whereError = content.indexOf(RET_ERROR);
+			    int whereEndError = content.indexOf(ENDRET_ERROR);
+			    int start = whereError + RET_ERROR.length();
+			    if(whereError!=-1 && whereEndError!=-1)
+			      content = content.substring(start, whereEndError);
+				throw new UnmarshallException(content);
+		    }else {
+		    	return "";
+		    }
 	    }
 
 	    int whereEndRet = content.indexOf(ENDRETOK);
@@ -123,4 +136,10 @@ public class ClientStub {
 
 	    return content.substring(start, whereEndRet);
 	  }
+	public String initContext(List<Object> asList) {
+		if(runningCtx==null) {
+			runningCtx =  runCommand("initContext",Arrays.asList());
+		}
+		return this.runningCtx;
+	}
 }

@@ -62,7 +62,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
                           "/favicon.ico",
                           "/**/*.html",
                           "/**/*.css",
-                          "/**/*.js"
+                          "/**/*.js",
+                          "/**/*.ttf",
+                          "/**/*.woff",
+                          "/**/*.woff2",
+                          "/**/*.png"
                   ).permitAll()
 
                   // Un-secure H2 Database

@@ -95,4 +95,9 @@ public class ResourceLoaderService  {
 		}
 		return file.getAbsolutePath();
 	}
+
+		public String getActionsDefinitionPath() {
+			// TODO Auto-generated method stub
+			return configs.getActionsDefinitionPath();
+		}
 }

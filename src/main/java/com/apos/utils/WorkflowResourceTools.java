@@ -1,5 +1,6 @@
 package com.apos.utils;
 
+import java.util.Iterator;
 import java.util.UUID;
 
 import org.json.JSONArray;
@@ -9,7 +10,14 @@ public class WorkflowResourceTools extends ResourceTools {
 
 	
 
-    public static JSONArray  getDefaultTransition(JSONObject extendedAttributes, JSONObject attributes){
+    public static final Object TYPE_APPLICATION = "APPLICATION";
+	public static final String ATTR_TO = "To";
+	public static final String ATTR_FROM = "From";
+	public static final String ATTR_PRIORITY = "Priority";
+	private static final String WF_XPDL_WORKFLOW_PLUGIN_SOURCES_TYPE = "xpdl:PluginSources";
+	private static final String WF_XPDL_WORKFLOW_PLUGIN_SOURCE_TYPE = "xpdl:PluginSource";
+
+	public static JSONArray  getDefaultTransition(JSONObject extendedAttributes, JSONObject attributes){
     	JSONArray transitionNode = createBasicElement(WF_TRANSITION_TYPE);
         setAttributes(transitionNode,attributes);
 
@@ -74,7 +82,7 @@ public class WorkflowResourceTools extends ResourceTools {
 		      JSONObject impAttrs = new JSONObject();
 	          impAttrs.put("Type","APPLICATION");
 			  JSONObject extAttrs = new JSONObject();
-			  extAttrs.put("pluginJava","com.sefas.workflow.plugins.java.StartingNode");
+			  extAttrs.put("pluginJava","com.apos.workflow.plugins.java.StartingNode");
 			ResourceTools.addChildren(activity, ResourceTools.getDefaultImplementation(extAttrs , impAttrs ));
 		
 			
@@ -156,6 +164,44 @@ public class WorkflowResourceTools extends ResourceTools {
         addChildren(content, xpdlNode);
 
 		return workflowNode;
+	}
+	
+	public static JSONArray getPackageTag(JSONArray jsArray) {
+		if(ResourceTools.WF_XPDL_PACKAGE_TYPE.equals(ResourceTools.getResourceType(jsArray))){
+			return jsArray;
+		}
+		JSONArray child = ResourceTools.getChildren(jsArray);
+		Iterator<Object> iter = child.iterator();
+		if(iter.hasNext())
+		    return getPackageTag((JSONArray) iter.next());
+		else 
+			return null;
+	}
+
+	public static JSONArray getWorkflowProcesses(JSONArray workflowJson) {
+		if(isBasicElement(workflowJson)) {
+			JSONArray packg = getPackageTag(workflowJson);
+			if(packg!=null) {
+				return getChildNodeOfType(packg, WF_XPDL_WORKFLOW_PROCESSES_TYPE);
+			}
+			return null;
+		}else {
+            throw new IllegalArgumentException("resource is not a basic element [_name_ , {_attributes_} , [_content_] ]") ;
+		}
+		
+	}
+
+	public static JSONArray getWorkflowPluginSources(JSONArray workflowJson) {
+		if(isBasicElement(workflowJson)) {
+			JSONArray packg = getPackageTag(workflowJson);
+			if(packg!=null) {
+				return getChildNodeOfType(packg, WF_XPDL_WORKFLOW_PLUGIN_SOURCES_TYPE);
+			}
+			return null;
+		}else {
+            throw new IllegalArgumentException("resource is not a basic element [_name_ , {_attributes_} , [_content_] ]") ;
+		}
+		
 	}
 
 

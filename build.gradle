@@ -7,7 +7,17 @@ plugins {
 
 war {
     enabled=true
+    archiveName = 'apos.war'
 }
+
+task copyOther(type: Copy){
+  from "D:/abdos/workspace/JS/docator/dist"
+  into "$webAppDirName" //src/main/webapp
+
+ }
+ 
+ war.dependsOn copyOther
+ 
 group = 'com.apos'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
@@ -29,6 +39,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation group: 'log4j', name: 'log4j', version: '1.2.17'
+	
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	compile group: 'org.json', name: 'json', version: '20190722'
@@ -36,6 +48,7 @@ dependencies {
 	//compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.17'
 	compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
 	compile group: 'commons-codec', name: 'commons-codec', version: '1.5'
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.4'
 	
 	
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
