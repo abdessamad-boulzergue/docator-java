@@ -67,20 +67,30 @@ public class Application implements IApplication {
 		      EnginesScriptlet scriptlet = instance.getImplementation();
 		      if(scriptlet!=null) {
 		    	  synchronized(scriptlet) {
+		    		 try {
+						
+					
 		    		  if(scriptlet instanceof WorkflowScriptlet) {
 		    			  WorkflowScriptlet wfScriptlet = (WorkflowScriptlet) scriptlet;
-		    			  wfScriptlet.populate(jobTicketRunner,jobTicketData);
+		    			  wfScriptlet.populate(jobTicketRunner,jobTicketData,parentImplementation.getActivity());
 		    			  if(wfScriptlet instanceof RemoteScriptlet) {
 		    				  ((RemoteScriptlet)wfScriptlet).setPluginSource(this.extendedAttributes.getString(IPlugin.PLUGIN_SRC_ID));
 		    			  }
 		    			  wfScriptlet.run();
 					      instance.clear(); 
 		    		  }
+		    	  } catch (Exception e) {
+		    		  e.printStackTrace();
+		    	  }
 		    	 }
 		    	  
 		      }
 		     
 		}
+	}
+
+	public IPlugin getInstance() {
+		return instance;
 	}
 }
 

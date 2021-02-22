@@ -25,6 +25,7 @@ implements Serializable {
   private String _pythonFileName = null ;
   private String _resTypes = null;
   private String uid = null;
+private JSONObject _params;
 
   public PersistentPluginData( String uid ,RemoteImageIcon icon ,
                                String name ,
@@ -32,7 +33,7 @@ implements Serializable {
                                int type ,
                                String className ,
                                String pythonFileName ,
-                               String resType) {
+                               String resType, JSONObject params) {
 	  this.uid = uid;
     _icon = icon.getImageData() ;
     _name = name ;
@@ -41,6 +42,7 @@ implements Serializable {
     _pythonFileName = pythonFileName ;
     _className= className;
     _resTypes = resType;
+    _params = params;
   }
   public static PersistentPluginData fromJson(JSONObject json) {
 	  
@@ -51,8 +53,9 @@ implements Serializable {
 	int type = 0;
 	String className = null;
 	String pythonFileName = json.getString("name");
+	JSONObject params = json.getJSONObject("params");
 	String resType = null;
-	return new PersistentPluginData(uid,icon, name, description, type, className, pythonFileName, resType);
+	return new PersistentPluginData(uid,icon, name, description, type, className, pythonFileName, resType,params);
   }
   public String getDescription() {
     return _description ;
@@ -89,5 +92,8 @@ implements Serializable {
   }
   public String getUId() {
 		return this.uid;
+  }
+  public JSONObject getScripletParams() {
+	  return this._params;
   }
 }

@@ -45,6 +45,21 @@ public class EngineVariables {
 	        throw new Exception("invalid Engine property type : " + type);
 	    }
 	}
+	public void setValue(char type,String key,String value) throws Exception {
+		switch (type) {
+		case EnginesScriptlet.SCRIPTLET:
+			 _template.put(key, value) ;break;
+		case EnginesScriptlet.ENVIRONMENT:
+			 _environment.put(key, value) ;break;
+		case EnginesScriptlet.VARIABLE:
+			 _variables.put(key, value) ;break;
+		case EnginesScriptlet.OUTPUT:
+			 _output.put(key, value) ;break;
+			
+		default:
+			throw new Exception("invalid Engine property type : " + type);
+		}
+	}
 
 	public void clear() {
 		_template.clear();
@@ -55,5 +70,21 @@ public class EngineVariables {
 		_variables= new HashMap<String, String>();
 		_output.clear();
 		_output= new HashMap<String, String>();
+	}
+
+	public boolean containstKey(char type, String key) {
+		switch (type) {
+		case EnginesScriptlet.SCRIPTLET:
+			 return _template.containsKey(key);
+		case EnginesScriptlet.ENVIRONMENT:
+			return _environment.containsKey(key);
+		case EnginesScriptlet.VARIABLE:
+			return _variables.containsKey(key);
+		case EnginesScriptlet.OUTPUT:
+			return _output.containsKey(key);
+			
+		default:
+			return false;
+		}
 	}
 }

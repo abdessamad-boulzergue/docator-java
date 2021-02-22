@@ -37,7 +37,7 @@ public class ResourceTools {
 	protected static final String pointX_END = "300";
 	protected static final String pointY_END = "250";
 	protected static final String START_ACTIVITY_NAME = "Start";
-	public static final String ATTR_NAME = "name";
+	public static final String ATTR_NAME = "Name";
     public static final String ATTR_RESDESC_ID = "resourceId";
     public static final String ATTR_ID = "Id";
 	public static final String ATTR_TYPE = "Type";
@@ -79,6 +79,7 @@ public class ResourceTools {
         for(Object child : contentArray){
         	if(child instanceof JSONArray && typeString.equals(getResourceType((JSONArray)child)) ) {
         		nodeOfType = (JSONArray) child;
+        		return nodeOfType;
         	}else if(child instanceof JSONArray) {
         		
 				for(Object litleChilde : getChildren((JSONArray)child)) {

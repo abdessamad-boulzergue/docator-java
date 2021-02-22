@@ -1,5 +1,9 @@
 package com.apos.plugins;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.json.JSONObject;
 
 import com.apos.socket.ClientStub;
@@ -60,14 +64,27 @@ public class RemoteShadowPlugin implements IPlugin {
 
 	@Override
 	public EnginesScriptlet getImplementation() {
-		if(implementation==null) {
-			implementation = new RemoteScriptlet();
+		try {
+			if(implementation==null) {
+				implementation = new RemoteScriptlet();
+			}
+			implementation.init();
+			implementation.initArgs(EnginesScriptlet.SCRIPTLET, getScripletHashMap(this.localIntance.getScripletParams()));
 			implementation.setPluginSource(stub);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		implementation.init();
 		return implementation;
 	}
-
+	public Map<String, String> getScripletHashMap(JSONObject args) {
+		Map<String, String> scripletArgs = new HashMap<String, String>();
+		Iterator<String> iter = args.keys();
+		while(iter.hasNext()) {
+			String key = iter.next();
+			scripletArgs.put(key , args.getString(key));
+		}
+		return scripletArgs;
+	}
 	@Override
 	public void setApplicationParent(IApplication application) {
 		
