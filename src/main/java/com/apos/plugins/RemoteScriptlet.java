@@ -21,12 +21,12 @@ public class RemoteScriptlet extends WorkflowScriptlet {
 		
 		this.initStub();
 		Map<String, String> param = new HashMap<>();
-		param.put("folderPath", "D:/");
-		param.put("fileList", "[\"*.pdf\"]");
-		Map<String, String> params = new HashMap<>();
+		try {
+			param = this.getScripletArgs();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		stub.startSession();
-		params.put("path", "apos");
-		params.put("plugin", "FilesPlugin");
 		String contextWf  = stub.initContext(Arrays.asList());
 		stub.runCommand("runPlugin", Arrays.asList(contextWf, "apos","FilesPlugin",new JSONObject(param).toString()));
 		stub.stopSession();

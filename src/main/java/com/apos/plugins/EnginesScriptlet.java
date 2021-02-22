@@ -31,8 +31,17 @@ abstract public class EnginesScriptlet {
 	  public Map<String, String> getArgs(char type) throws Exception {
 	    return variables.getArgs(type);
 	  }
-	abstract public void run();
+	  public abstract void run();
 	public  void clear() {
 		variables.clear();
+	}
+	public void setScriptletArgs(String key,String value) throws Exception {
+		this.variables.setValue(SCRIPTLET, key, value);
+	}
+	public Map<String, String> getScripletArgs() throws Exception {
+		return this.getArgs(SCRIPTLET);
+	}
+	public boolean containsScriptletKey(String key) {
+		return this.variables.containstKey(SCRIPTLET,key);
 	}
 }

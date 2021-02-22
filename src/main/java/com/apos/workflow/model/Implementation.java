@@ -4,6 +4,7 @@ import org.json.JSONArray;
 
 import com.apos.plugins.IPluginLoad;
 import com.apos.utils.ResourceTools;
+import com.apos.workflow.plugin.IApplication;
 import com.apos.workflow.runtime.JobTicketData;
 import com.apos.workflow.runtime.JobTicketRunner;
 
@@ -39,5 +40,12 @@ public class Implementation {
 		 if (application != null) {
 		      application.execute(jobTicketRunner, jobTicketData, null);
 		 }
+	}
+
+	public Application getApplication() {
+		return this.application;
+	}
+	public Activity getActivity() {
+		return this.parentActivity;
 	}
 }
