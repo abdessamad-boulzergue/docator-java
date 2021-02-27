@@ -10,6 +10,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +100,15 @@ public class ResourceLoaderService  {
 	}
 
 		public String getActionsDefinitionPath() {
-			// TODO Auto-generated method stub
 			return configs.getActionsDefinitionPath();
+		}
+
+		public void delete(String name) throws IOException {	
+			Path path = Paths.get(configs.getResourcesPath(), name);
+			Files.delete(path);
+		}
+
+		public String getResourcePath(String resourceId) {
+			return configs.getResourcesPath().concat("/").concat(resourceId);
 		}
 }

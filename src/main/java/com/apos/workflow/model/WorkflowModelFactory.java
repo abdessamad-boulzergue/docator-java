@@ -7,6 +7,9 @@ import com.apos.plugins.IPluginLoad;
 
 public class WorkflowModelFactory {
 
+	private WorkflowModelFactory() {
+		
+	}
 	public static IPlugin buildPluginComponent(IPluginLoad loader, JSONObject extendedAttributes) {
 		 int factoryType = WorkflowModelFactory.getFactoryType(extendedAttributes);
 		 switch (factoryType) {

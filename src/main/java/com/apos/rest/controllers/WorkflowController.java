@@ -2,6 +2,8 @@ package com.apos.rest.controllers;
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -24,6 +26,7 @@ import com.apos.rest.controllers.service.ResourcesService;
 import com.apos.rest.dto.WorkflowData;
 import com.apos.utils.WorkflowResourceTools;
 import com.apos.workflow.remote.WorkflowRemote;
+import com.apos.workflow.runtime.WorkflowAgent;
 
 @RestController
 @CrossOrigin
@@ -32,7 +35,9 @@ public class WorkflowController {
    Logger logger = LoggerFactory.getLogger(WorkflowController.class);
    
    @Autowired
-   ResourcesService resourceService; 
+   ResourcesService resourceService;
+   @Autowired
+	WorkflowAgent agent;
    
    @Autowired
    WorkflowRemote wfRemoteService; 
@@ -48,8 +53,18 @@ public class WorkflowController {
    @PostMapping("/run")
    public ResponseEntity<String> run(@RequestParam(name="workflowId") String workflowId){
 	   
-	   wfRemoteService.startWorkflow();
 	   
+
+	   String wfModelPath = resourceService.getResourcePath(workflowId);
+		String jobTicketData="C:/hcs/env/test/client_4.1/tagTest2_1.1/config/1142.prop";
+		Map<String, String> mapParameters = new HashMap<String, String>();
+		try {
+			agent.startWorkflow("1", wfModelPath, jobTicketData, mapParameters );
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	
+		   
 	   return ResponseEntity.status(HttpStatus.OK).body("OK");
 	   
    }

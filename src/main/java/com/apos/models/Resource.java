@@ -16,6 +16,7 @@ import javax.validation.constraints.NotNull;
 
 import org.json.JSONObject;
 
+import com.apos.utils.ResourceTools;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
@@ -100,8 +101,8 @@ public class Resource {
 
 
 	public static Resource from(JSONObject attributes) {
-		Long id = Long.parseLong(attributes.get("resdescid").toString());
-		String name = attributes.getString("name");
+		Long id = Long.parseLong(attributes.get(ResourceTools.ATTR_RESDESC_ID).toString());
+		String name = attributes.getString(ResourceTools.ATTR_NAME);
 		Resource res = new Resource();
 		res.setName(name);
 		res.setId(id);
@@ -135,9 +136,9 @@ public class Resource {
 
 	public JSONObject toJson() {
 		JSONObject obj = new JSONObject();
-		obj.put("resdescid", this.id);
-		obj.put("name", this.name);
-		obj.put("version", this.maxVersion.getName());
+		obj.put(ResourceTools.ATTR_RESDESC_ID, this.id);
+		obj.put(ResourceTools.ATTR_NAME, this.name);
+		obj.put(ResourceTools.ATTR_VERSION, this.maxVersion.getName());
 		return obj;
 	}
 	

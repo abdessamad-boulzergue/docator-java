@@ -24,12 +24,14 @@ public class WorkflowRemoteService implements WorkflowRemote{
 	}
 	@PostConstruct
 	public void init() {
-
 		
+
+		/*
 		JsonNode src = sourceConfig.get("workflow_server");
 		String host = src.get("address").asText();
 		Integer port = Integer.valueOf(src.get("port").asText());
 		wfStub = new WorkflowStub(host, port);
+		*/
 			
 	}
 	

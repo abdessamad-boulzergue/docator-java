@@ -1,4 +1,4 @@
-package com.apos.rest.exceptions;
+package com.apos.rest.exceptions.advice;
 
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
@@ -9,20 +9,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.client.ResourceAccessException;
 
+import com.apos.rest.exceptions.AposTransactionException;
+import com.apos.rest.exceptions.AposValidationException;
+import com.apos.rest.exceptions.ResourceNotFoundException;
+
 @ControllerAdvice
-public class ResourceNotFoundAdvice {
+public class ResourceNotFoundAdvice extends GenericExceptionsAdvice {
 
 	private static final String NOT_FOUND="Resource not found";
 	private static final String ACCESS_FAILED="resource access failed";
 	private static final String VALIDATE_FAILED="entity validation error";
-	public JSONObject createErrorObject(int status , String message,String error) {
-		JSONObject object = new JSONObject();
-		object.put("status", status);
-		object.put("error", error);
-		object.put("message", message);
-
-		return object;
-	}
 	
 	@ResponseBody
 	@ExceptionHandler(ResourceNotFoundException.class)

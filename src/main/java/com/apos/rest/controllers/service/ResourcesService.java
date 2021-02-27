@@ -1,19 +1,18 @@
 package com.apos.rest.controllers.service;
 
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import com.apos.models.Resource;
 import com.apos.models.ResourceType;
 import com.apos.models.ResourceVersion;
 import com.apos.resources.ResourceLoaderService;
+import com.apos.rest.exceptions.ResourceAccessException;
 import com.apos.rest.exceptions.ResourceNotFoundException;
 import com.apos.rest.repo.ResourceRepo;
 import com.apos.rest.repo.ResourceTypeRepo;
@@ -107,6 +106,21 @@ public class ResourcesService {
 
 	public String readResourceFromFile(String fileName) {
 		return resourceLoader.readResource(fileName);
+	}
+
+	public void delete(long id) {
+		try {
+			resourceRepo.deleteById(id);
+			resourceLoader.delete(String.valueOf(id));
+		} catch (EmptyResultDataAccessException | NoSuchFileException  e) {
+			throw new ResourceNotFoundException(id);
+		} catch (IOException e) {
+			throw new ResourceAccessException(String.valueOf(id));
+		}
+	}
+
+	public String getResourcePath(String workflowId) {
+		return resourceLoader.getResourcePath(workflowId);
 	}
 	
 }

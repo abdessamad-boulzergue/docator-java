@@ -41,6 +41,7 @@ public class ResourceTools {
     public static final String ATTR_RESDESC_ID = "resourceId";
     public static final String ATTR_ID = "Id";
 	public static final String ATTR_TYPE = "Type";
+	public static final String ATTR_VERSION = "Version";
 
     public static final String POINT_X = "pointX";
     public static final String POINT_Y = "pointY";
@@ -140,7 +141,6 @@ public class ResourceTools {
 	}
 
 	public static boolean isBasicElement(JSONArray resource) {
-		
 		return 
                 resource.length() == 3
                 && resource.get(INDEX_TYPE) instanceof String

@@ -6,6 +6,9 @@ import java.util.UUID;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.apos.workflow.plugin.EndingNode;
+import com.apos.workflow.plugin.StartingNode;
+
 public class WorkflowResourceTools extends ResourceTools {
 
 	
@@ -82,7 +85,7 @@ public class WorkflowResourceTools extends ResourceTools {
 		      JSONObject impAttrs = new JSONObject();
 	          impAttrs.put("Type","APPLICATION");
 			  JSONObject extAttrs = new JSONObject();
-			  extAttrs.put("pluginJava","com.apos.workflow.plugins.java.StartingNode");
+			  extAttrs.put("pluginJava",StartingNode.class.getName());
 			ResourceTools.addChildren(activity, ResourceTools.getDefaultImplementation(extAttrs , impAttrs ));
 		
 			
@@ -98,7 +101,7 @@ public class WorkflowResourceTools extends ResourceTools {
 			    impAttrs = new JSONObject();
 		        impAttrs.put("Type","APPLICATION");
 				extAttrs = new JSONObject();
-				extAttrs.put("pluginJava","com.sefas.workflow.plugins.java.EndingNode");
+				extAttrs.put("pluginJava",EndingNode.class.getName());
 				ResourceTools.addChildren(endActivity, ResourceTools.getDefaultImplementation(extAttrs , impAttrs ));
 			ResourceTools.addChildren(activities, endActivity);
 
@@ -151,6 +154,7 @@ public class WorkflowResourceTools extends ResourceTools {
 		JSONArray xpdlNode = createBasicElement(WF_XPDL_TYPE);
 		JSONArray xpdlPackageNode = createBasicElement(WF_XPDL_PACKAGE_TYPE);
 		JSONArray xpdlProcessesNode = createBasicElement(WF_XPDL_WORKFLOW_PROCESSES_TYPE);
+		JSONArray xpdlPlugSrcNode = createBasicElement(WF_XPDL_WORKFLOW_PLUGIN_SOURCES_TYPE);
 		JSONArray xpdlProcessNode = createBasicElement(WF_XPDL_WORKFLOW_PROCESS_TYPE);
 		JSONArray activitiesNode = createBasicElement(WF_ACTIVITIES_TYPE);
 		JSONArray transitionsNode = createBasicElement(WF_TRANSITIONS_TYPE);
@@ -158,6 +162,7 @@ public class WorkflowResourceTools extends ResourceTools {
 		addChildren(xpdlProcessNode,activitiesNode);
         addChildren(xpdlProcessNode, transitionsNode);
         addChildren(xpdlProcessesNode, xpdlProcessNode);
+        addChildren(xpdlPackageNode, xpdlPlugSrcNode);
         addChildren(xpdlPackageNode, xpdlProcessesNode);
         addChildren(xpdlNode, xpdlPackageNode);
 

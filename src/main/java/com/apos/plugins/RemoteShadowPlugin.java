@@ -61,6 +61,9 @@ public class RemoteShadowPlugin implements IPlugin {
 	public boolean isStarting() {
 		return false;
 	}
+	public Map<String, String> getScripletArgs() {
+		return getScripletHashMap(this.localIntance.getScripletParams());
+	}
 
 	@Override
 	public EnginesScriptlet getImplementation() {

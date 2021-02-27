@@ -48,7 +48,7 @@ public class PluginLoader implements IPluginLoad{
 		JsonNode sourcesNode = pluginDatasource.get("pluginSources");
 		sourcesNode.forEach(src->{
 			String id = src.get("id").asText();
-			String host = src.get("address").asText();
+			String host = src.get("host").asText();
 			Integer port = Integer.valueOf(src.get("port").asText());
 			sources.put(id, new PluginSocketLoader(id,host, port ));
 		});

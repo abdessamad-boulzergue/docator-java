@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.apos.rest.exceptions.DataFormatException;
+
 @ControllerAdvice
 public class GenericExceptionsAdvice {
 
@@ -26,6 +28,12 @@ public class GenericExceptionsAdvice {
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	String noSuchElement(NoSuchElementException ex) {
 		return createErrorObject(HttpStatus.NOT_FOUND.value(), ex.getMessage() , "element not found").toString() ;
+	}
+	@ResponseBody
+	@ExceptionHandler(DataFormatException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	String dataFormatExeption(DataFormatException ex) {
+		return createErrorObject(HttpStatus.BAD_REQUEST.value(), ex.getMessage() , "bad format").toString() ;
 	}
 	
 }

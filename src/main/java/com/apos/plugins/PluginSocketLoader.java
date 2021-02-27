@@ -84,9 +84,9 @@ public class PluginSocketLoader implements IPluginSource {
 		}
 		
 	}
-	
 	public Map<String, IPlugin> loadPluginsIn(String location){
-		
+	    //this.uid.concat("-").concat(Base64.encode(pluginKey.getBytes()));
+
 	     initContextWf();
 		
 		String result = runCommand("loadPlugins",Arrays.asList(contextWf,location));
@@ -97,7 +97,7 @@ public class PluginSocketLoader implements IPluginSource {
 			Iterator<String> it = remoteH.keySet().iterator();
 			while (it.hasNext()) {
 			        String pluginKey = it.next();
-			        String plugUID = pluginKey; //this.uid.concat("-").concat(Base64.encode(pluginKey.getBytes()));
+			        String plugUID = pluginKey; 
 			        JSONObject serialized = remoteH.get(pluginKey);	
 			        serialized.put("uid",plugUID );
 			        PersistentPluginData dataInstance = RemoteShadowPlugin.deserializeInstance(serialized);
@@ -114,6 +114,10 @@ public class PluginSocketLoader implements IPluginSource {
 	@Override
 	public String init() {
 		return initContextWf();
+	}
+	@Override
+	public String getKey() {
+		return this.uid;
 	}
 
 }
