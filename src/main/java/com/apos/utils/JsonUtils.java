@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 
 public class JsonUtils {
 	private static Logger logger = LoggerFactory.getLogger(JsonUtils.class);
-	 public static Map<String, JSONObject> fromJsonHashMap(String name, String inHashMap)  {
-		 Map<String, JSONObject> returned = new HashMap<>();   
+	 public static Map<String, Object> fromJsonHashMap(String name, String inHashMap)  {
+		 Map<String, Object> returned = new HashMap<>();   
 		 try {
 		    	JSONObject obj = new JSONObject(inHashMap);
 		    	if(obj.has(name)) {
@@ -26,13 +26,13 @@ public class JsonUtils {
 		  }
 	
 	@SuppressWarnings("unchecked")
-	  public static Map<String, JSONObject> fromJsonHashMap(JSONObject map) throws JSONException {
-	    HashMap<String, JSONObject> returned = new HashMap<>();
+	  public static Map<String, Object> fromJsonHashMap(JSONObject map) throws JSONException {
+	    HashMap<String, Object> returned = new HashMap<>();
 
 	    Iterator<String> it = map.keys();
 	    while (it.hasNext()) {
 	      String curK = it.next();
-	      JSONObject curVal = map.getJSONObject(curK);
+	      Object curVal = map.get(curK);
 	      returned.put(curK, curVal);
 	    }
 	    return returned;

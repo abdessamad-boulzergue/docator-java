@@ -3,6 +3,7 @@ package com.apos.workflow.runtime;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -18,7 +19,7 @@ public class WorkflowProcess {
 	  static Logger  logger        = Logger.getLogger(WorkflowScriptlet.class);
 
 	private IPluginLoad loader;
-	private HashMap _runningEnvironment;
+	private Map _runningEnvironment;
 	private boolean isLoadFinish;
 	private boolean isChanged = true;
 	private String id;
@@ -31,7 +32,7 @@ public class WorkflowProcess {
 		this.loader = pluginLoader;
 	}
 
-	public void setRunningEnvironment(HashMap runningEnvironment) {
+	public void setRunningEnvironment(Map runningEnvironment) {
 	    _runningEnvironment = runningEnvironment;
 		
 	}

@@ -5,12 +5,12 @@ import java.util.Map;
 
 public class EngineVariables {
 
-	private Map<String, String> _template;
-	private Map<String, String> _environment;
-	private Map<String, String> _variables;
-	private Map<String, String> _output;
+	private Map<String, Object> _template;
+	private Map<String, Object> _environment;
+	private Map<String, Object> _variables;
+	private Map<String, Object> _output;
 
-	public void initArgs(char type, Map<String, String> properties) throws Exception {
+	public void initArgs(char type, Map<String, Object> properties) throws Exception {
 	    switch (type) {
 	      case EnginesScriptlet.SCRIPTLET:
 	        _template = properties;
@@ -30,7 +30,7 @@ public class EngineVariables {
 	    }
 	  }
 
-	public Map<String, String> getArgs(char type) throws Exception {
+	public Map<String, Object> getArgs(char type) throws Exception {
 		switch (type) {
 	      case EnginesScriptlet.SCRIPTLET:
 	        return _template ;
@@ -45,7 +45,7 @@ public class EngineVariables {
 	        throw new Exception("invalid Engine property type : " + type);
 	    }
 	}
-	public void setValue(char type,String key,String value) throws Exception {
+	public void setValue(char type,String key,Object value) throws Exception {
 		switch (type) {
 		case EnginesScriptlet.SCRIPTLET:
 			 _template.put(key, value) ;break;
@@ -63,13 +63,13 @@ public class EngineVariables {
 
 	public void clear() {
 		_template.clear();
-		_template= new HashMap<String, String>();
+		_template= new HashMap<>();
 		_environment.clear();
-		_environment= new HashMap<String, String>();
+		_environment= new HashMap<>();
 		_variables.clear();
-		_variables= new HashMap<String, String>();
+		_variables= new HashMap<>();
 		_output.clear();
-		_output= new HashMap<String, String>();
+		_output= new HashMap<>();
 	}
 
 	public boolean containstKey(char type, String key) {

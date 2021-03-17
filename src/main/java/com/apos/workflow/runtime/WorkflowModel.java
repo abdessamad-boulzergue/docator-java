@@ -1,11 +1,10 @@
 package com.apos.workflow.runtime;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import com.apos.plugins.IPluginLoad;
 import com.apos.plugins.PluginLoader;
@@ -33,17 +32,17 @@ public class WorkflowModel {
 		return ResourceTools.getAttribute(json, ResourceTools.ATTR_NAME);
 	}
 
-	public void load(String absolutePath, String  encode, HashMap envParams) {
+	public void load(String absolutePath, String  encode, Map envParams) {
 		String workflowContent = FileUtils.readFile(new File(absolutePath));
 		loadModel(workflowContent,encode,envParams);
 	}
 
-	private void loadModel(String workflowContent, String encode, HashMap envParams) {
+	private void loadModel(String workflowContent, String encode, Map envParams) {
 		 model = new JSONArray(workflowContent);
 		loadModel(envParams);
 	}
 
-	private void loadModel(HashMap envParams) {
+	private void loadModel(Map envParams) {
 		workflowName = getWorkflowName();
 		JSONArray pluginSrcTag = WorkflowResourceTools.getWorkflowPluginSources(model);
 		JSONArray pluginSrc =ResourceTools.getChildren(pluginSrcTag);
@@ -64,8 +63,7 @@ public class WorkflowModel {
 				setRoot(new WorkflowProcess(singleLoader ));
 		     }
 			_root.setRunningEnvironment(envParams);
-	        _root.load(workflowProcess);
-	        
+	        _root.load(workflowProcess);	        
 		}
 		isChanged = false;
 	}

@@ -1,5 +1,8 @@
 package com.apos.workflow.model;
 
+import java.util.Iterator;
+import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -72,12 +75,17 @@ public class Application implements IApplication {
 					
 		    		  if(scriptlet instanceof WorkflowScriptlet) {
 		    			  WorkflowScriptlet wfScriptlet = (WorkflowScriptlet) scriptlet;
-		    			  wfScriptlet.populate(jobTicketRunner,jobTicketData,parentImplementation.getActivity());
+		    			  populate(wfScriptlet,jobTicketRunner,jobTicketData,parentImplementation.getActivity());
+		    			  jobTicketData.updateScriplet(wfScriptlet);
 		    			  if(wfScriptlet instanceof RemoteScriptlet) {
 		    				  ((RemoteScriptlet)wfScriptlet).setPluginSource(this.extendedAttributes.getString(IPlugin.PLUGIN_SRC_ID));
 		    			  }
 		    			  wfScriptlet.run();
+		    			  
+		    			  jobTicketData.populateWithScripletOuput(wfScriptlet.getOutputArgs());
+		    			  
 					      instance.clear(); 
+					      
 		    		  }
 		    	  } catch (Exception e) {
 		    		  e.printStackTrace();
@@ -89,6 +97,31 @@ public class Application implements IApplication {
 		}
 	}
 
+	private void populate(WorkflowScriptlet wfScriptlet, JobTicketRunner jobTicketRunner, JobTicketData jobTicketData,
+			Activity activity) throws Exception {
+		wfScriptlet.populateRuntimeArgs(jobTicketRunner,jobTicketData);
+		wfScriptlet.populateOutputArgs(jobTicketData.getRunningEnvironment());
+		String nameId = activity.getName() + "_" + activity.getId();
+		nameId = nameId.replace(' ', '_');
+		updateScripletArgs(wfScriptlet,nameId,jobTicketData.getRunningEnvironment());
+	}
+	private void updateScripletArgs(WorkflowScriptlet wfScriptlet, String nameId, Map<String, String> params) throws Exception {
+		Iterator<String> paramList = params.keySet().iterator();
+	    while (paramList.hasNext()) {
+	      String nextKey = paramList.next();
+	      String scriptletName = nextKey;
+	      String separator = nameId.concat(".");
+	      if (nextKey.startsWith(separator)) {
+	        scriptletName = nextKey.substring(separator.length());
+	      }
+	      if (scriptletName != null && !scriptletName.isEmpty()) {
+	    	 Object obj =  params.get(nextKey);
+	        String nextValue = obj.toString();
+	        wfScriptlet.setScriptletArgs(scriptletName, nextValue,false);
+	        
+	      }
+	    }
+	}
 	public IPlugin getInstance() {
 		return instance;
 	}

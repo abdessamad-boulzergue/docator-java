@@ -93,17 +93,23 @@ public class PluginSocketLoader implements IPluginSource {
 		Map<String,IPlugin> plugins = new HashMap<>();
 
 		if(result!=null && !result.isEmpty()) {
-			Map<String, JSONObject> remoteH = JsonUtils.fromJsonHashMap("plugins", result);
+			Map<String, Object> remoteH = JsonUtils.fromJsonHashMap("plugins", result);
 			Iterator<String> it = remoteH.keySet().iterator();
 			while (it.hasNext()) {
 			        String pluginKey = it.next();
 			        String plugUID = pluginKey; 
-			        JSONObject serialized = remoteH.get(pluginKey);	
-			        serialized.put("uid",plugUID );
-			        PersistentPluginData dataInstance = RemoteShadowPlugin.deserializeInstance(serialized);
-			        RemoteShadowPlugin plugin = new RemoteShadowPlugin( pluginKey, dataInstance);
-			        plugin.setPluginSource(stub);
-			        plugins.put(plugUID, plugin);
+			        Object serializedObj = remoteH.get(pluginKey);	
+			        
+			        if(serializedObj instanceof JSONObject) {
+			        	JSONObject json = (JSONObject)serializedObj;
+			        	json.put("uid",plugUID );
+				        PersistentPluginData dataInstance = RemoteShadowPlugin.deserializeInstance(json);
+				        RemoteShadowPlugin plugin = new RemoteShadowPlugin( pluginKey, dataInstance);
+				        plugin.setPluginSource(stub);
+				        plugins.put(plugUID, plugin);
+			        }
+			        	
+			        
 		      }
 		}
 		return plugins;

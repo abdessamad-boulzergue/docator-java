@@ -1,6 +1,9 @@
 package com.apos.workflow.runtime;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 
@@ -25,7 +28,7 @@ implements Serializable {
   private String _pythonFileName = null ;
   private String _resTypes = null;
   private String uid = null;
-private JSONObject _params;
+private List<ScriptParams> _params;
 
   public PersistentPluginData( String uid ,RemoteImageIcon icon ,
                                String name ,
@@ -42,7 +45,19 @@ private JSONObject _params;
     _pythonFileName = pythonFileName ;
     _className= className;
     _resTypes = resType;
-    _params = params;
+    _params = new ArrayList<ScriptParams>();
+    Iterator<String> keysIter = params.keys();
+    while(keysIter.hasNext()) {
+      String key = keysIter.next();
+      Object value = params.get(key);
+      if(value instanceof String) {
+    	  _params.add(new ScriptParams(key, (String)value, ScriptParams.STRING));
+      }
+      else if(value instanceof JSONObject) {
+    	  JSONObject jsonValue = (JSONObject) value;
+    	  _params.add(new ScriptParams(key, jsonValue.getString(ScriptParams.VALUE), jsonValue.getString(ScriptParams.TYPE)));
+      }
+    }
   }
   public static PersistentPluginData fromJson(JSONObject json) {
 	  
@@ -93,7 +108,7 @@ private JSONObject _params;
   public String getUId() {
 		return this.uid;
   }
-  public JSONObject getScripletParams() {
+  public List<ScriptParams> getScripletParams() {
 	  return this._params;
   }
 }

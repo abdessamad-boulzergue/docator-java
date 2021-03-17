@@ -97,12 +97,9 @@ public class WorkflowController {
 			resource.setType(type);
 			Resource savedResource = resourceService.saveResource(resource);
 			if(savedResource!=null && savedResource.getId()>0) {
-			
 				String versionName = savedResource.getMaxVersion().getName();
-				attributes.put("version", versionName);
-				attributes.put("resdescid", String.valueOf(savedResource.getId()));
-				
-				result =  resourceService.writeResourceTofile(attributes.getString("resdescid"), json.toString());
+				attributes.put("version", versionName);				
+				result =  resourceService.writeResourceTofile(String.valueOf(savedResource.getId()), json.toString());
 
 				if(result == null || result.isEmpty()) {
 					 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("save failed") ; 
@@ -112,7 +109,7 @@ public class WorkflowController {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("save failed") ; 
 			}
 			
-		} catch (IOException e) {
+		} catch (Exception e) {
 			 logger.error("save workflow : exception ".concat(e.getMessage()));
 			 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage()) ; 
 		}

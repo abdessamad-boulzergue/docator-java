@@ -9,12 +9,15 @@ import org.junit.jupiter.api.Test;
 
 import com.apos.plugins.IPlugin;
 import com.apos.plugins.PluginSocketLoader;
+import com.apos.socket.ClientStub;
 
 public class SocketPluginLoader {
 
 	@Test
 	void loadPlugins() {
-		PluginSocketLoader loader = new PluginSocketLoader("127.0.0.1", 19902);
+		ClientStub stub = new ClientStub("127.0.0.1", 19902);
+		PluginSocketLoader loader = new PluginSocketLoader(stub );
+				//loader.c"127.0.0.1", 19902);
 		loader.init();
 		Map<String, IPlugin> plugs = loader.getAll();
 		loader.close();

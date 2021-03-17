@@ -1,6 +1,5 @@
 package com.apos.rest.controllers;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
@@ -22,7 +21,6 @@ import com.apos.models.Resource;
 import com.apos.models.ResourceType;
 import com.apos.rest.controllers.service.ResourcesService;
 import com.apos.rest.exceptions.DataFormatException;
-import com.apos.rest.exceptions.ResourceNotFoundException;
 import com.apos.rest.validator.AposValidator;
 import com.apos.rest.validator.ValidatorFactory;
 
