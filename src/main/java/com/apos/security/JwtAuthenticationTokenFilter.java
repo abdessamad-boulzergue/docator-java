@@ -26,23 +26,23 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
     private static final String AUTHENTICATION_SCHEME = "Bearer ";
+    private static final String AUTHENTICATION_SCHEME_SOCKET_SJ = "Bearer_";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         final String tokenHeader = request.getHeader("AUTHORIZATION");
+        final String tokenHeaderforSocket = request.getHeader("sec-websocket-protocol");
 
         String username = null;
         String authToken = null;
         if (tokenHeader != null && tokenHeader.startsWith(AUTHENTICATION_SCHEME)) {
-            authToken = tokenHeader.substring(7);
-            try {
-                username = jwtTokenUtil.getUsernameFromToken(authToken);
-            } catch (IllegalArgumentException e) {
-                logger.error("an error occured during getting username from token", e);
-            } catch (Exception e) {
-                logger.warn("the token is expired and not valid anymore", e);
-            }
-        } else {
+        	authToken = tokenHeader.substring(7);
+            username = this.getUserNameFromTocken(tokenHeader);
+        }else if(tokenHeaderforSocket != null && tokenHeaderforSocket.startsWith(AUTHENTICATION_SCHEME_SOCKET_SJ)){
+        	authToken = tokenHeaderforSocket.substring(7);
+        	username = this.getUserNameFromTocken(tokenHeaderforSocket);
+        }
+        else {
             logger.warn("couldn't find bearer string, will ignore the header");
         }
 
@@ -65,5 +65,18 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
         chain.doFilter(request, response);
 }
+    String getUserNameFromTocken(String tokenHeader) {
+    	
+    	String username= null;
+    	String authToken = tokenHeader.substring(7);
+        try {
+            username = jwtTokenUtil.getUsernameFromToken(authToken);
+        } catch (IllegalArgumentException e) {
+            logger.error("an error occured during getting username from token", e);
+        } catch (Exception e) {
+            logger.warn("the token is expired and not valid anymore", e);
+        }   
+        return username;
+    }
 
 }

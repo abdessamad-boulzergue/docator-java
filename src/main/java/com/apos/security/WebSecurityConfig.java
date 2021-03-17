@@ -58,6 +58,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
                   // allow anonymous resource requests
                   .antMatchers(HttpMethod.GET,
                           "/",
+                          "/aposWebSocket",
                           "/*.html",
                           "/favicon.ico",
                           "/**/*.html",
