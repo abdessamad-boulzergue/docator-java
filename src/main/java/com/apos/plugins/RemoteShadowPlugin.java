@@ -2,6 +2,7 @@ package com.apos.plugins;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONObject;
@@ -11,6 +12,7 @@ import com.apos.utils.DataSerializer;
 import com.apos.utils.SerializerException;
 import com.apos.workflow.plugin.IApplication;
 import com.apos.workflow.runtime.PersistentPluginData;
+import com.apos.workflow.runtime.ScriptParams;
 
 public class RemoteShadowPlugin implements IPlugin {
 
@@ -61,9 +63,10 @@ public class RemoteShadowPlugin implements IPlugin {
 	public boolean isStarting() {
 		return false;
 	}
-	public Map<String, String> getScripletArgs() {
-		return getScripletHashMap(this.localIntance.getScripletParams());
+	public List<ScriptParams> getScripletArgs() {
+		return this.localIntance.getScripletParams();
 	}
+	
 
 	@Override
 	public EnginesScriptlet getImplementation() {
@@ -72,6 +75,7 @@ public class RemoteShadowPlugin implements IPlugin {
 				implementation = new RemoteScriptlet();
 			}
 			implementation.init();
+			implementation.setPluginName(this.localIntance.getName());
 			implementation.initArgs(EnginesScriptlet.SCRIPTLET, getScripletHashMap(this.localIntance.getScripletParams()));
 			implementation.setPluginSource(stub);
 		} catch (Exception e) {
@@ -79,12 +83,19 @@ public class RemoteShadowPlugin implements IPlugin {
 		}
 		return implementation;
 	}
-	public Map<String, String> getScripletHashMap(JSONObject args) {
-		Map<String, String> scripletArgs = new HashMap<String, String>();
+	private Map<String, Object> getScripletHashMap(List<ScriptParams> scripletParams) {
+		Map<String, Object> scripletArgs = new HashMap<>();
+		for(ScriptParams param : scripletParams) {
+			scripletArgs.put(param.getName() , param.getValue());
+		}
+		return scripletArgs;
+	}
+	public Map<String, Object> getScripletHashMap(JSONObject args) {
+		Map<String, Object> scripletArgs = new HashMap<>();
 		Iterator<String> iter = args.keys();
 		while(iter.hasNext()) {
 			String key = iter.next();
-			scripletArgs.put(key , args.getString(key));
+			scripletArgs.put(key , args.get(key));
 		}
 		return scripletArgs;
 	}

@@ -1,8 +1,5 @@
 package com.apos.utils;
 
-import java.util.Collection;
-import java.util.UUID;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -14,7 +11,7 @@ public class ResourceTools {
 	public static final int INDEX_CHILDREN = 2;
 
 	public static final String CONTENT = "CONTENT";
-	public final static String WF_REPOSITORY_WORKFLOW_TYPE  = "repository:Workflow";
+	public static final  String WF_REPOSITORY_WORKFLOW_TYPE  = "repository:Workflow";
 	public static final String WF_Description_TYPE = "xpdl:Description";
 	public static final String  WF_ExtendedAttributes_TYPE = "xpdl:ExtendedAttributes";
 	public static final String WF_Implementation_TYPE = "xpdl:Implementation";
@@ -36,19 +33,18 @@ public class ResourceTools {
 	
 	protected static final String pointX_END = "300";
 	protected static final String pointY_END = "250";
-	protected static final String START_ACTIVITY_NAME = "Start";
-	public static final String ATTR_NAME = "Name";
+	protected static final String START_ACTIVITY_NAME = "start";
+	public static final String ATTR_NAME = "name";
     public static final String ATTR_RESDESC_ID = "resourceId";
-    public static final String ATTR_ID = "Id";
-	public static final String ATTR_TYPE = "Type";
-	public static final String ATTR_VERSION = "Version";
-
+    public static final String ATTR_ID = "id";
+	public static final String ATTR_TYPE = "type";
+	public static final String ATTR_VERSION = "version";
     public static final String POINT_X = "pointX";
     public static final String POINT_Y = "pointY";
     
-	public final static String WF_REPOSITORY_WORKFLOW_JOB_CONFIG  = "repository:WorkflowJobConfiguration";
+	public static final String WF_REPOSITORY_WORKFLOW_JOB_CONFIG  = "repository:WorkflowJobConfiguration";
     
-	
+
 	public static JSONArray getContent(JSONArray basicElement) {
 		return getChildNodeOfType(basicElement, CONTENT);
 	}
@@ -157,7 +153,7 @@ public class ResourceTools {
 		JSONArray basicElement = new JSONArray();
 		basicElement.put(beType);
 		
-		if(withContent == true) {
+		if(withContent) {
 			content.put( createBasicElement(CONTENT , false));
 		}
 		basicElement.put(new JSONObject());

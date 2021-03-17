@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +15,7 @@ public class TestPatterns {
 	
 	@Test
 	public void testPattern2() {
+		System.out.println(UUID.randomUUID().toString());
 		String pattern="\\w+=\\w+";
 		String msg="key2=value";
 		 String patternOpertor = "(!=|<=|>=|=|<|>)";

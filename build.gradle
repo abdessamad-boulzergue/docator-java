@@ -40,6 +40,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation group: 'log4j', name: 'log4j', version: '1.2.17'
+	// https://mvnrepository.com/artifact/org.springframework/spring-websocket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'

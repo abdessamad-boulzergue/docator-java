@@ -14,11 +14,12 @@ public class WorkflowResourceTools extends ResourceTools {
 	
 
     public static final Object TYPE_APPLICATION = "APPLICATION";
-	public static final String ATTR_TO = "To";
-	public static final String ATTR_FROM = "From";
-	public static final String ATTR_PRIORITY = "Priority";
+	public static final String ATTR_TO = "to";
+	public static final String ATTR_FROM = "from";
+	public static final String ATTR_PRIORITY = "priority";
 	private static final String WF_XPDL_WORKFLOW_PLUGIN_SOURCES_TYPE = "xpdl:PluginSources";
 	private static final String WF_XPDL_WORKFLOW_PLUGIN_SOURCE_TYPE = "xpdl:PluginSource";
+
 
 	public static JSONArray  getDefaultTransition(JSONObject extendedAttributes, JSONObject attributes){
     	JSONArray transitionNode = createBasicElement(WF_TRANSITION_TYPE);
@@ -83,23 +84,23 @@ public class WorkflowResourceTools extends ResourceTools {
 		
 		   JSONArray activity = ResourceTools.getChildNodeOfType(workflow, ResourceTools.WF_ACTIVITY_TYPE); 
 		      JSONObject impAttrs = new JSONObject();
-	          impAttrs.put("Type","APPLICATION");
+	          impAttrs.put(ATTR_TYPE,"APPLICATION");
 			  JSONObject extAttrs = new JSONObject();
 			  extAttrs.put("pluginJava",StartingNode.class.getName());
 			ResourceTools.addChildren(activity, ResourceTools.getDefaultImplementation(extAttrs , impAttrs ));
 		
 			
 			extendedAttributes = new JSONObject();
-			extendedAttributes.put("pointX", pointX_END);
-			extendedAttributes.put("pointY", pointY_END);
+			extendedAttributes.put(POINT_X, pointX_END);
+			extendedAttributes.put(POINT_Y, pointY_END);
 
 			attributes = new JSONObject();
 			attributes.put(ATTR_NAME, "End");
-			attributes.put("Id", UUID.randomUUID().toString());
+			attributes.put(ATTR_ID, UUID.randomUUID().toString());
 			
 			JSONArray endActivity = getDefaultActivity(extendedAttributes, attributes );
 			    impAttrs = new JSONObject();
-		        impAttrs.put("Type","APPLICATION");
+		        impAttrs.put(ATTR_TYPE,"APPLICATION");
 				extAttrs = new JSONObject();
 				extAttrs.put("pluginJava",EndingNode.class.getName());
 				ResourceTools.addChildren(endActivity, ResourceTools.getDefaultImplementation(extAttrs , impAttrs ));
@@ -109,14 +110,14 @@ public class WorkflowResourceTools extends ResourceTools {
 		JSONArray transitions = ResourceTools.getChildNodeOfType(workflow, ResourceTools.WF_TRANSITIONS_TYPE);
 		
 		extendedAttributes = new JSONObject();
-		extendedAttributes.put("pointX", pointX_TRANSITION);
-		extendedAttributes.put("pointY", pointY_TRANSITION);
+		extendedAttributes.put(POINT_X, pointX_TRANSITION);
+		extendedAttributes.put(POINT_Y, pointY_TRANSITION);
 
 		attributes = new JSONObject();
 		attributes.put(ATTR_NAME, "activity-1");
-		attributes.put("Id", UUID.randomUUID().toString());
-		attributes.put("To", getAttribute(endActivity, ATTR_ID));
-		attributes.put("From", getAttribute(startActivity, ATTR_ID));
+		attributes.put(ATTR_ID, UUID.randomUUID().toString());
+		attributes.put(ATTR_TO, getAttribute(endActivity, ATTR_ID));
+		attributes.put(ATTR_FROM, getAttribute(startActivity, ATTR_ID));
 		
 		JSONArray transition = getDefaultTransition(extendedAttributes, attributes );
 		
@@ -147,9 +148,9 @@ public class WorkflowResourceTools extends ResourceTools {
     
 	public static JSONArray getEmptytWorflowJson(JSONObject workflowAttrs ) {
 
-		JSONArray workflowNode = createBasicElement(WF_REPOSITORY_WORKFLOW_TYPE,true);
+		JSONArray workflowNode = createBasicElement(WF_REPOSITORY_WORKFLOW_TYPE,false);
 		setAttributes(workflowNode,workflowAttrs);
-		JSONArray content = getContent(workflowNode);
+		//JSONArray content = getContent(workflowNode);
 		
 		JSONArray xpdlNode = createBasicElement(WF_XPDL_TYPE);
 		JSONArray xpdlPackageNode = createBasicElement(WF_XPDL_PACKAGE_TYPE);
@@ -166,7 +167,7 @@ public class WorkflowResourceTools extends ResourceTools {
         addChildren(xpdlPackageNode, xpdlProcessesNode);
         addChildren(xpdlNode, xpdlPackageNode);
 
-        addChildren(content, xpdlNode);
+        addChildren(workflowNode, xpdlNode);
 
 		return workflowNode;
 	}
