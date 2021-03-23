@@ -2,17 +2,21 @@ package com.apos.workflow.runtime;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.apos.plugins.PluginLoader;
 import com.apos.workflow.model.Activity;
 import com.apos.workflow.plugin.WorkflowScriptlet;
 
-public class JobTicket implements IJobTicket{
+public class JobTicket implements IJobTicket, Observer{
 	  static Logger  logger        = Logger.getLogger(JobTicket.class);
 
 	private String _contextID;
@@ -25,6 +29,7 @@ public class JobTicket implements IJobTicket{
 	private PluginLoader pluginLoader;
 	private WorkflowMonitorContext monitorRunningContext;
 	private JobTicketRunner runner;
+	private ArrayList<JobTicketListener> jobTicketListeners = new ArrayList<>();
 
 	public JobTicket(String modelPath, String jobTicketDataFilePath, String contextId,
 			Map<String, String> mapParameters) {
@@ -41,10 +46,10 @@ public class JobTicket implements IJobTicket{
 		belongingProcess = workflowModel.getRoot();
 		 SimpleDateFormat dataFormat = new SimpleDateFormat("yyyyMMdd");
 	      SimpleDateFormat timeFormat = new SimpleDateFormat("HHmmssS");
-	      //_jobTicketData.setData(CONTEXT_BUILTIN, _pluginLoader.getRunningContextDirectory(getMainRunningContext()));
-	      //_jobTicketData.setData(RUNNINGCONTEXT_BUILTIN, _jobTicketId);
 	      jobTicketData.setData("StartDate", dataFormat.format(startTime));
 	      jobTicketData.setData("StartTime", timeFormat.format(startTime));
+	      
+	      addListener(WorkflowMonitor.getMonitor());
 	}
 
 	private void loadModel(String modelPath) {
@@ -83,7 +88,6 @@ public class JobTicket implements IJobTicket{
 	private void initJobTicketDataFromPath(String jobTicketDataFilePath)  {
 		jobTicketData = new JobTicketData();
 	    if (jobTicketDataFilePath.endsWith(".json")) {
-	      //jobTicketData.loadJson(new File(jobTicketDataFilePath));
 	    	System.out.println("Not implemented");
 	    } else {
 	      jobTicketData.load(new File(jobTicketDataFilePath));
@@ -101,7 +105,7 @@ public class JobTicket implements IJobTicket{
 	}
 	private void initMainJobTicketRunner() {
 	    runner = new JobTicketRunner(this, jobTicketData);
-
+	    runner.addObserver(this);
 	}
 
 	public String getId() {
@@ -109,6 +113,30 @@ public class JobTicket implements IJobTicket{
 	}
 	public void setMonitorRunningContext(WorkflowMonitorContext context) {
 		monitorRunningContext = context;
+		addListener(context);
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		notifyLiteners(arg);
+	}
+
+	private void notifyLiteners(Object arg) {
+		for(JobTicketListener l : jobTicketListeners) {
+			l.runtimeChange(arg);
+		}
+	}
+
+	@Override
+	public void addListener(JobTicketListener listener) {
+		if(listener!=null && !jobTicketListeners.contains(listener)) {
+			jobTicketListeners.add(listener);
+		}
+	}
+
+	@Override
+	public String getContext() {
+		return _contextID;
 	}
 
 }

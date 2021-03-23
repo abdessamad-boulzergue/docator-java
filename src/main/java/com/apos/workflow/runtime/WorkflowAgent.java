@@ -3,23 +3,25 @@ package com.apos.workflow.runtime;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.apos.rest.controllers.websocket.AposSocketHandler;
+import com.apos.rest.controllers.websocket.AposWebSocketData;
 
 @Service
 public class WorkflowAgent {
 
-	
+	@Autowired
+	WorkflowMonitorContext monitorCtx;
 	 public String startWorkflow(String contextId, String xpdl, String jobTicketData,Map<String,String> mapParameters) throws Exception {
 		    WorkflowContextInterface context = getContext(contextId);
-
-		    String runningContextId = context.startWorkflow( xpdl, jobTicketData,mapParameters);
-		    
+		    context.startWorkflow( xpdl, jobTicketData,mapParameters);
 		    return contextId;
 		  }
 	 
 	 private WorkflowContextInterface getContext(String contextId) throws Exception {
-		 WorkflowMonitorContext monitor = WorkflowMonitorContext.getInstance();
-		    WorkflowContextInterface context = monitor.getContext(contextId);
+		    WorkflowContextInterface context = monitorCtx.getContext(contextId);
 		    if (context == null) { throw new Exception("Invalid workflow context :" + contextId); }
 		    return context;
 		  }

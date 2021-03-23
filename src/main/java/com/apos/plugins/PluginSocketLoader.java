@@ -85,7 +85,6 @@ public class PluginSocketLoader implements IPluginSource {
 		
 	}
 	public Map<String, IPlugin> loadPluginsIn(String location){
-	    //this.uid.concat("-").concat(Base64.encode(pluginKey.getBytes()));
 
 	     initContextWf();
 		

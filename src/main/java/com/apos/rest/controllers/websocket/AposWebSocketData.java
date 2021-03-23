@@ -35,8 +35,14 @@ public class AposWebSocketData {
 		
 		return socketData;
 	}
-
-
+     
+	@Override
+	public String toString() {
+		JSONObject obj = new JSONObject();
+		obj.put("type", type);
+		obj.put("message", message);
+		return obj.toString();
+	}
 	public static AposWebSocketData getData(String type, String msg) {
 		return new AposWebSocketData(type, msg);
 	}

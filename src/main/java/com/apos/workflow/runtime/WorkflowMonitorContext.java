@@ -3,14 +3,24 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.apos.rest.controllers.websocket.AposSocketHandler;
+import com.apos.rest.controllers.websocket.AposWebSocketData;
 import com.apos.rest.exceptions.ResourceAccessException;
-public class WorkflowMonitorContext extends WorkflowCommonContext{
+import com.apos.workflow.runtime.utils.WorkflowEventRuntimeBuilder;
+@Component
+public class WorkflowMonitorContext extends WorkflowCommonContext implements JobTicketListener{
 
 	private String id="1";
 	  private static WorkflowMonitorContext                        _instance                 = null;
 	  private static HashMap<String, WorkflowCommonContext> _contexts                 = new HashMap<String, WorkflowCommonContext>();
 	  private WorkflowJobTicketInterface runtimeInterface;
-	
+	  @Autowired
+		AposSocketHandler socketHandler;
+	  
 	  WorkflowMonitorContext(){
 		  String key="1";
 		  runtimeInterface = new WorkflowJobticketBean();
@@ -35,7 +45,6 @@ public class WorkflowMonitorContext extends WorkflowCommonContext{
 		jobTicketInterface.setMonitorRunningContext(this);
 		jobTicketInterface.start();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -45,7 +54,7 @@ public class WorkflowMonitorContext extends WorkflowCommonContext{
 		return id;
 	}
 
-	public static WorkflowMonitorContext getInstance() {
+	public static WorkflowMonitorContext getInstancex() {
 	    if (_instance == null) {
 	        _instance = new WorkflowMonitorContext();
 	      }
@@ -57,4 +66,9 @@ public class WorkflowMonitorContext extends WorkflowCommonContext{
 	        return _contexts.get(contextId);
 	      }
 	    }
+	@Override
+	public void runtimeChange(Object obj) {
+		WorkflowEventRuntimeBuilder builder = new WorkflowEventRuntimeBuilder((JSONObject) obj);
+		socketHandler.broadcast("WORKFLOW_RUNTIME_EVENTS_"+builder.getContext(), (JSONObject) obj);
+	}
 }

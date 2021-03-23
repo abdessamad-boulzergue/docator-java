@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -27,19 +28,35 @@ public class AposSocketHandler extends TextWebSocketHandler {
 		} catch (Exception e) {
 			data = AposWebSocketData.getData("Exception", e.getMessage());
 		}
-		
-		broadcast(data.getMessage());
+		if(data.getType().equals("register")) {
+		    register(data.getMessage(),session);
+		    JSONObject json = new JSONObject();
+		    json.put("session", session.getId());
+			broadcast("register",json,session);
+		}
 	}
 
-	 public void broadcast( String message) throws IOException {
-		 broadcast(DEFAULT_TOPIC, message);
+	 public void broadcast( JSONObject data)  {
+		 broadcast(DEFAULT_TOPIC, data);
 	 }
 
-	public void broadcast(String topic, String message) throws IOException {
+	public void broadcast(String topic, JSONObject data) {
+		data.put("type", topic);
 		 CopyOnWriteArrayList<WebSocketSession> sessions = topics.get(topic);
-		 for(WebSocketSession session : sessions) {
-			session.sendMessage(new TextMessage(message));
-		 }
+			try {
+				 for(WebSocketSession session : sessions) {
+					 if(session.isOpen())
+					    session.sendMessage(new TextMessage(data.toString()));
+				 }
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		 
+	}
+	public void broadcast(String topic,JSONObject data,WebSocketSession session) throws IOException {
+		    data.put("type", topic);
+			session.sendMessage(new TextMessage(data.toString()));
+		 
 	}
 	
 	@Override
@@ -53,17 +70,27 @@ public class AposSocketHandler extends TextWebSocketHandler {
 	}
 	@Override
 	public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-		session.sendMessage(new TextMessage(exception.getMessage()));
+		String error = exception.getMessage();
+		error = error!=null? error : "error occurred";
+		session.sendMessage(new TextMessage(error));
 	}
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-		 CopyOnWriteArrayList<WebSocketSession> sessions = topics.get(DEFAULT_TOPIC);
+		
+		register(DEFAULT_TOPIC,session); 
+		 
+	}
+
+	private void register(String topic, WebSocketSession session) {
+
+		CopyOnWriteArrayList<WebSocketSession> sessions = topics.get(topic);
 		 if(sessions==null) {
 			 sessions = new CopyOnWriteArrayList<> ();
-			 topics.put(DEFAULT_TOPIC, sessions);
+			 topics.put(topic, sessions);
 		 }
-		 
-		 sessions.add(session);
+		 if(!sessions.contains(session))
+		    sessions.add(session);
 	}
+	
 
 }
