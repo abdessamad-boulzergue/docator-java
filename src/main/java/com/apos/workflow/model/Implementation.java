@@ -21,9 +21,7 @@ public class Implementation {
 		parentActivity = activity;
 	}
 
-	public void execute() {
-		application.execute();
-	}
+	
 
 	public void load(IPluginLoad loader, JSONArray jsonImplement) {
 		JSONArray jsTool = ResourceTools.getChildNodeOfType(jsonImplement, ResourceTools.WF_Tool_TYPE);

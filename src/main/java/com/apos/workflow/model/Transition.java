@@ -18,9 +18,7 @@ public class Transition {
 	private Activity targetAcivity;
 	private Activity sourceAcivity;
 	
-	public void execute() {
-		implementation.execute();
-	}
+	
 
 	public void setProcess(WorkflowProcess workflowProcess) {
 		this.workflowProcess = workflowProcess;

@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apos.socket.ClientSessionException;
 import com.apos.socket.ClientStub;
 import com.apos.utils.Base64;
 import com.apos.utils.JsonUtils;
@@ -34,13 +35,13 @@ public class PluginSocketLoader implements IPluginSource {
 		this.host = host;
 		this.port = port;
 	    this.stub = new ClientStub(this.host, this.port);
-	    this.uid  = id;//UUID.randomUUID().toString();
+	    this.uid  = id;
 	}
 	public void close() {
 		if(stub!=null)
 		 stub.stopSession();
 	}
-	public IPlugin get(String key) {
+	public IPlugin get(String key) throws StubCommandException {
 
 		IPlugin plug =null;
 	    try {
@@ -61,30 +62,36 @@ public class PluginSocketLoader implements IPluginSource {
 	}
 
 	@Override
-	public Map<String, IPlugin> getAll() {
+	public Map<String, IPlugin> getAll() throws StubCommandException {
 		return loadPluginsIn("apos");
 	}
 	
 	
-	public String initContextWf(){
-		if(this.contextWf==null || this.contextWf.trim().isEmpty()) {
-			contextWf  = runCommand("initContext",Arrays.asList());
-			logger.debug(contextWf);
-		}
+	public String initContextWf()  {
+		
+			if(this.contextWf==null || this.contextWf.trim().isEmpty()) {
+				contextWf  = runCommand("initContext",Arrays.asList());
+				logger.debug(contextWf);
+			}
+		
 		return this.contextWf;
 	}
-	String runCommand(String mth , List<Object> params) {
-		synchronized(stub) {
-			String result = new String() ;
-		stub.startSession();
-		result = stub.runCommand(mth, params);
-		close();
+	String runCommand(String mth , List<Object> params)  {
 
-	     return result;
+		try {
+			synchronized(stub) {
+				stub.startSession();
+				String result = stub.runCommand(mth, params);
+				close();
+			     return result;
+			}
+		} catch (ClientSessionException e) {
+			throw new PluginLoaderException(e.getMessage());
 		}
 		
+
 	}
-	public Map<String, IPlugin> loadPluginsIn(String location){
+	public Map<String, IPlugin> loadPluginsIn(String location) {
 
 	     initContextWf();
 		
@@ -117,12 +124,13 @@ public class PluginSocketLoader implements IPluginSource {
 	
 	
 	@Override
-	public String init() {
+	public String init() throws Exception {
 		return initContextWf();
 	}
 	@Override
 	public String getKey() {
-		return this.uid;
+		String id = String.valueOf(port).concat(host);
+		return  Base64.encode(id.getBytes());
 	}
 
 }

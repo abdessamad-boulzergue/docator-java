@@ -122,5 +122,9 @@ public class ResourcesService {
 	public String getResourcePath(String workflowId) {
 		return resourceLoader.getResourcePath(workflowId);
 	}
+
+	public String readResourceFromJsonFile(String id) {
+		return readResourceFromFile(id.concat(".json"));
+	}
 	
 }

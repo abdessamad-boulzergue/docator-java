@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import com.apos.socket.ClientSessionException;
 import com.apos.socket.ClientStub;
 import com.apos.utils.JsonUtils;
 import com.apos.workflow.plugin.WorkflowScriptlet;
@@ -15,17 +16,13 @@ public class RemoteScriptlet extends WorkflowScriptlet {
 
 	ClientStub stub;
 	private String pluginName;
-	@Override
-	public void init() {
-		super.init();
-	}
+	
 	public void setPluginName(String pluginName){
 		this.pluginName = pluginName;
 	}
 	@Override
-	public void run() {
+	public void run() throws ClientSessionException {
 		
-		this.initStub();
 		Map<String, Object> param = new HashMap<>();
 		try {
 			param = this.getScripletArgs();
@@ -56,12 +53,8 @@ public class RemoteScriptlet extends WorkflowScriptlet {
 		}
 		}
 	}
-	private void initStub() {}
-	public void setPluginSource(String obj) {
-		
-	}
+	
 	public void setPluginSource(ClientStub stub) {
 		this.stub =stub;
 	}
-
 }

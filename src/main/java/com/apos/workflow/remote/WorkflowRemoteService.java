@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.apos.socket.ClientSessionException;
 import com.fasterxml.jackson.databind.JsonNode;
 
 @Service
@@ -40,7 +41,12 @@ public class WorkflowRemoteService implements WorkflowRemote{
 		String contextId="";
 		String wfResourceId="1";
 		HashMap<String, String> params = new HashMap<>();
-		wfStub.startSession();
+		try {
+			wfStub.startSession();
+		} catch (ClientSessionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		wfStub.startWorkflow(contextId, wfResourceId, params);
 	}
 }

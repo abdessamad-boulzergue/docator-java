@@ -114,15 +114,14 @@ public class ClientSession {
 	}
 	public void stop() {
 		try {
-				this.client.close(); // Closing this socket will also close the socket's InputStream and OutputStream. 
+			    if(this.client!=null)
+			    	this.client.close(); // Closing this socket will also close the socket's InputStream and OutputStream. 
 				this._inStream =null;
 				this._outStream =null;
 				this.client =null;
 			} catch (IOException e) {
 				e.printStackTrace();
-			} catch (NullPointerException e) {
-				e.printStackTrace();
-			}
+			} 
 			finally {
 				isRuning=false;
 			}

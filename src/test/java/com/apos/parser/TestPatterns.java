@@ -14,7 +14,17 @@ public class TestPatterns {
 
 	
 	@Test
-	public void testPattern2() {
+	public void replacePattern() {
+		String txt ="WEB_COMPONENT_P3_1_2_1_4 (18)";
+		String pattern=" \\(\\d{1,3}\\)";
+		Matcher matcher = Pattern.compile(pattern).matcher(txt);
+		if(matcher.find())
+		System.out.println(matcher.group());
+		System.out.println(txt.replace(" ", ""));
+	}
+		
+		@Test
+		public void testPattern2() {
 		System.out.println(UUID.randomUUID().toString());
 		String pattern="\\w+=\\w+";
 		String msg="key2=value";

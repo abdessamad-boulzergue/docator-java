@@ -22,9 +22,7 @@ public class Activity {
 	private JobTicketRunner runner;
 	private ActivityGraph graph = new ActivityGraph();
 
-	public void execute() {
-		implementation.execute();
-	}
+	
 
 	public void setProcess(WorkflowProcess workflowProcess) {
 		_workflowProcess = workflowProcess;
@@ -34,18 +32,13 @@ public class Activity {
 		this.loadExtendedAttributes(jsActivity);
 		this.loadCommonAttributes(jsActivity);
 		this.loadImplementation(loader, jsActivity);
-		this.setScripletAttribute();
 
 	}
 
 	 public EnginesScriptlet getScriptlet() {
-		    EnginesScriptlet scriptlet = implementation.getApplication().getInstance().getImplementation();
-		    return scriptlet;
+		    return implementation.getApplication().getInstance().getImplementation();
 		  }
-	private void setScripletAttribute() {
-		//EnginesScriptlet scriplet = this.getScriptlet();
-		//scriplet.getScripletArgs();
-	}
+
 
 	private void loadImplementation(IPluginLoad loader, JSONArray jsActivity) {
 		JSONArray jsonImplement = ResourceTools.getChildNodeOfType(jsActivity, ResourceTools.WF_Implementation_TYPE);

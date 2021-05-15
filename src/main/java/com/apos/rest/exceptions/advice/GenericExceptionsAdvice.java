@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.apos.plugins.PluginLoaderException;
 import com.apos.rest.exceptions.DataFormatException;
+import com.apos.socket.ClientSessionException;
 
 @ControllerAdvice
 public class GenericExceptionsAdvice {
@@ -34,6 +36,13 @@ public class GenericExceptionsAdvice {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	String dataFormatExeption(DataFormatException ex) {
 		return createErrorObject(HttpStatus.BAD_REQUEST.value(), ex.getMessage() , "bad format").toString() ;
+	}
+	
+	@ResponseBody
+	@ExceptionHandler(PluginLoaderException.class)
+	@ResponseStatus(HttpStatus.OK)
+	String dataFormatExeption(Exception ex) {
+		return createErrorObject(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage() , "error loading plugins").toString() ;
 	}
 	
 }

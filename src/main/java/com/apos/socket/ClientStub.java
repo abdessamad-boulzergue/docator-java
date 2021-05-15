@@ -1,6 +1,7 @@
 package com.apos.socket;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -8,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.apos.plugins.UnmarshallException;
 import com.apos.rest.exceptions.SocketSendReceiveException;
+import com.apos.utils.Base64;
 
 public class ClientStub {
 
@@ -16,8 +18,8 @@ public class ClientStub {
 	private int port;
 	private String  encoding = DEFAULT_ENCODING;
 	private ClientSession session;
-	Logger logger = LoggerFactory.getLogger(ClientStub.class);
-	String runningCtx=null;
+	private Logger logger = LoggerFactory.getLogger(ClientStub.class);
+	private String runningCtx=null;
 	private static final  String RETOK = "<OK>";
 	private static final  String RET_ERROR = "<ERROR>";
 	private static final  String ENDRET_ERROR = "</ERROR>";
@@ -36,11 +38,14 @@ public class ClientStub {
 		this.session = new ClientSession();
 	}
 	
-	public void startSession() {
+	public void startSession() throws ClientSessionException {
 		synchronized(session) {
 			
 			if(!session.isRunning()) {
 				session.start(this.host,this.port,this.encoding);
+				if(!session.isRunning()) {
+					throw new ClientSessionException(String.format("session not started %s:%d",this.host,this.port));
+				}
 			}
 			
 		}
@@ -89,7 +94,6 @@ public class ClientStub {
 		try {
 			marshall("ALC");
 			marshall("MTH ".concat(mth));
-
 		
 		params.stream().forEach(param->{
 			try {
@@ -116,7 +120,6 @@ public class ClientStub {
 	
 	protected String unmarshall(String content) throws UnmarshallException {
 	    int whereRet = content.indexOf(RETOK);
-
 	    if (whereRet == -1) {
 		    int whereEndRet = content.indexOf(ENDRETOK);
 		    if(whereEndRet==-1) {
@@ -141,5 +144,13 @@ public class ClientStub {
 			runningCtx =  runCommand("initContext",Arrays.asList());
 		}
 		return this.runningCtx;
+	}
+	public HashMap<String, String> getBinding() {
+		HashMap<String, String> config= new HashMap<String, String>();
+		config.put("host", host);
+		config.put("port", String.valueOf(port));
+		String id = String.valueOf(port).concat(host);
+		config.put("id", Base64.encode(id.getBytes()));
+		return config;
 	}
 }

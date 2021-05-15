@@ -19,7 +19,6 @@ public class WorkflowMonitor implements JobTicketListener{
 	@Override
 	public void runtimeChange(Object obj) {
 		
-		socketHandler.broadcast("default", AposWebSocketData.getData("default", "run"));
 		
 	}
 

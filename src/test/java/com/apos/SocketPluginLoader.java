@@ -14,7 +14,7 @@ import com.apos.socket.ClientStub;
 public class SocketPluginLoader {
 
 	@Test
-	void loadPlugins() {
+	void loadPlugins() throws Exception {
 		ClientStub stub = new ClientStub("127.0.0.1", 19902);
 		PluginSocketLoader loader = new PluginSocketLoader(stub );
 				//loader.c"127.0.0.1", 19902);

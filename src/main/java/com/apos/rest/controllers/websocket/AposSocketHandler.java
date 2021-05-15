@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -14,9 +15,8 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 @Component
 public class AposSocketHandler extends TextWebSocketHandler {
-	
+	Logger logger = Logger.getLogger(AposSocketHandler.class);
 	HashMap<String,CopyOnWriteArrayList<WebSocketSession>> topics = new HashMap<>();
-	static final String DEFAULT_TOPIC = "default";
 
 	@Override
 	public void handleTextMessage(WebSocketSession session, TextMessage message)
@@ -26,36 +26,38 @@ public class AposSocketHandler extends TextWebSocketHandler {
 			 data = AposWebSocketData.parse(message.getPayload());
 
 		} catch (Exception e) {
-			data = AposWebSocketData.getData("Exception", e.getMessage());
+			data = AposWebSocketData.getExceptionData(e.getMessage());
 		}
-		if(data.getType().equals("register")) {
-		    register(data.getMessage(),session);
-		    JSONObject json = new JSONObject();
-		    json.put("session", session.getId());
-			broadcast("register",json,session);
+		if(data.isRegister()) {
+		    register(data.getTopic(),session);
+		    data.setSession(session.getId());
+			broadcastResigter(data.getJsonData(),session);
 		}
 	}
-
-	 public void broadcast( JSONObject data)  {
-		 broadcast(DEFAULT_TOPIC, data);
-	 }
+	
+	private void broadcastResigter(JSONObject jsonData, WebSocketSession session) throws IOException {
+		broadcast("register", jsonData, session);
+	}
 
 	public void broadcast(String topic, JSONObject data) {
-		data.put("type", topic);
+		AposWebSocketData dataObj =  AposWebSocketData.withJson(data);
+		dataObj.setType(topic);
 		 CopyOnWriteArrayList<WebSocketSession> sessions = topics.get(topic);
 			try {
 				 for(WebSocketSession session : sessions) {
 					 if(session.isOpen())
-					    session.sendMessage(new TextMessage(data.toString()));
+					    session.sendMessage(new TextMessage(dataObj.toString()));
 				 }
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		 
 	}
+	
 	public void broadcast(String topic,JSONObject data,WebSocketSession session) throws IOException {
-		    data.put("type", topic);
-			session.sendMessage(new TextMessage(data.toString()));
+		AposWebSocketData dataObj =  AposWebSocketData.withJson(data);
+		dataObj.setType(topic);
+		session.sendMessage(new TextMessage(dataObj.toString()));
 		 
 	}
 	
@@ -66,19 +68,12 @@ public class AposSocketHandler extends TextWebSocketHandler {
 			topics.get(keys.next()).remove(session);
 		 }
 		super.afterConnectionClosed(session, status);
-		
 	}
 	@Override
 	public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
 		String error = exception.getMessage();
 		error = error!=null? error : "error occurred";
 		session.sendMessage(new TextMessage(error));
-	}
-	@Override
-	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-		
-		register(DEFAULT_TOPIC,session); 
-		 
 	}
 
 	private void register(String topic, WebSocketSession session) {

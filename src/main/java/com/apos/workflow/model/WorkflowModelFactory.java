@@ -1,5 +1,6 @@
 package com.apos.workflow.model;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.apos.plugins.IPlugin;
@@ -10,7 +11,7 @@ public class WorkflowModelFactory {
 	private WorkflowModelFactory() {
 		
 	}
-	public static IPlugin buildPluginComponent(IPluginLoad loader, JSONObject extendedAttributes) {
+	public static IPlugin buildPluginComponent(IPluginLoad loader, JSONObject extendedAttributes)  {
 		 int factoryType = WorkflowModelFactory.getFactoryType(extendedAttributes);
 		 switch (factoryType) {
 		        case IPlugin.FACTORY_TYPE_PLUGIN_JAVA:

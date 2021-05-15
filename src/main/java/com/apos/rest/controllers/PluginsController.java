@@ -2,7 +2,6 @@ package com.apos.rest.controllers;
 
 import java.util.List;
 
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +22,14 @@ public class PluginsController {
 	IPluginLoad _ploader;
 	
 	@GetMapping
-	ResponseEntity<IPlugin> getPlugin(@RequestParam(name = "key") String key){
+	public ResponseEntity<IPlugin> getPlugin(@RequestParam(name = "srcKey") String srcKey,@RequestParam(name = "key") String pluginKey){
 
-		IPlugin plugin = _ploader.load("src_1",key);
+		IPlugin plugin = _ploader.load(srcKey,pluginKey);
 	     return ResponseEntity.status(HttpStatus.OK).body(plugin) ; 
 	}
 	
 	@GetMapping(path = "/all")
-	ResponseEntity<List<IPlugin>> getPlugins(){
+	public ResponseEntity<List<IPlugin>> getPlugins(){
 		List<IPlugin> plugin = _ploader.load();
 	     return ResponseEntity.status(HttpStatus.OK).body(plugin) ; 
 	}

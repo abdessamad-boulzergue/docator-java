@@ -45,7 +45,9 @@ public class RemoteShadowPlugin implements IPlugin {
 		  if (localIntance == null) { return null; }
 		    return String.valueOf(localIntance.getType());
 	}
-
+	public HashMap<String, String> getBinding(){
+		return stub.getBinding();
+	}
 	@Override
 	public String getId() {
 		return localIntance.getPythonFileName();

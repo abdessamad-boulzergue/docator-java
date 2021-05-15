@@ -2,27 +2,38 @@ package com.apos.plugins;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.apos.workflow.plugin.WorkflowScriptlet;
 import com.fasterxml.jackson.databind.JsonNode;
 
 @Service
 public class PluginLoader implements IPluginLoad{
 	
-	private static PluginLoader _singleton;
+	  private static final String SOCKET_SRC = "socket";
+	  private static final String JAVA_SRC = "java";
+
+	static Logger  logger    = Logger.getLogger(PluginLoader.class);
+
+	private static PluginLoader singleton;
+
 	@Autowired
 	@Qualifier("workflow_connection")
 	JsonNode pluginDatasource;
-	Map<String, IPlugin> plugins = new HashMap();
-    HashMap<String, IPluginSource> sources = new HashMap<String, IPluginSource>() ;
+	Map<String, IPlugin> plugins = new HashMap<>();
+    HashMap<String, IPluginSource> sources = new HashMap<>() ;
 	
     private String sessionID;
     
@@ -38,8 +49,18 @@ public class PluginLoader implements IPluginLoad{
     }
 	@Override
 	public IPlugin load(String srcKey , String pluginKey) {
-		return sources.get(srcKey).get(pluginKey);
+		IPlugin plugin =null;
+		Set<String> keys = sources.keySet();
+		for(String key : keys) {
+			IPluginSource loader = sources.get(key);
+			if(loader.getKey().equals(srcKey)) {
+				plugin=loader.get(pluginKey);
+				break;
+			}
+		}
+			
 		
+		return plugin;
 	}
 	
 	@Override
@@ -47,19 +68,35 @@ public class PluginLoader implements IPluginLoad{
 	public void init() {
 		JsonNode sourcesNode = pluginDatasource.get("pluginSources");
 		sourcesNode.forEach(src->{
-			String id = src.get("id").asText();
-			String host = src.get("host").asText();
-			Integer port = Integer.valueOf(src.get("port").asText());
-			sources.put(id, new PluginSocketLoader(id,host, port ));
-		});
+			Iterator<Entry<String, JsonNode>> fields = src.fields();
+			HashMap<String, String> srcParams = new HashMap<>();
+			while(fields.hasNext()) {
+				Entry<String, JsonNode> field = fields.next();
+				String key = field.getKey();
+				srcParams.put(key , field.getValue().asText());
+			}
+			 IPluginSource pluginSrc = PluginSourceFactory.getSource(srcParams);
+			 if(pluginSrc!=null) {
+			     sources.put(pluginSrc.getKey(),pluginSrc);
+			 }else {
+				 logger.warn("invalide plugin source, got null : params : ".concat(srcParams.toString()));
+			 }
+			});
 		
 		
 
 	}
 	@Override
-	public List<IPlugin> load() {
+	public List<IPlugin> load()  {
 		
-		plugins.putAll( sources.get("src_1").getAll());
+		try {
+			sources.forEach((key,src)->{
+				plugins.putAll( src.getAll());
+			});
+		
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
 	
 		List<IPlugin> returns = new ArrayList<IPlugin>();
 		plugins.forEach((uid, plug)->{
@@ -68,10 +105,10 @@ public class PluginLoader implements IPluginLoad{
 		return returns;
 	}
 	public static PluginLoader getPluginLoader() {
-	    if (_singleton == null) {
-	      _singleton = new PluginLoader();
+	    if (singleton == null) {
+	      singleton = new PluginLoader();
 	    }
-	    return _singleton;
+	    return singleton;
 	  }
 	@Override
 	public IPlugin getJavaPlugin(String pluginJava, String instanceClassName) {
@@ -87,7 +124,7 @@ public class PluginLoader implements IPluginLoad{
 		          System.out.println(instanceClassName.concat(" not instance of IPlugin"));
 		        }
 		      }catch(Exception e) {
-		    	  e.printStackTrace();
+		    	  logger.error(e.getMessage());
 		      }
 		}
 		return null;
@@ -106,7 +143,13 @@ public class PluginLoader implements IPluginLoad{
 	
 	public String getNewRunningContext(String keySrc) {
 		IPluginSource src = sources.get(keySrc);
-		return src.init();
+		String ctx=null;
+		try {
+			ctx =  src.init();
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return ctx;
 	}
 
 }

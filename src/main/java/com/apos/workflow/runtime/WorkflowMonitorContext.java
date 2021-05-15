@@ -3,6 +3,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,7 @@ import com.apos.rest.exceptions.ResourceAccessException;
 import com.apos.workflow.runtime.utils.WorkflowEventRuntimeBuilder;
 @Component
 public class WorkflowMonitorContext extends WorkflowCommonContext implements JobTicketListener{
-
+	private Logger logger = Logger.getLogger(WorkflowMonitorContext.class);
 	private String id="1";
 	  private static WorkflowMonitorContext                        _instance                 = null;
 	  private static HashMap<String, WorkflowCommonContext> _contexts                 = new HashMap<String, WorkflowCommonContext>();
@@ -45,7 +46,11 @@ public class WorkflowMonitorContext extends WorkflowCommonContext implements Job
 		jobTicketInterface.setMonitorRunningContext(this);
 		jobTicketInterface.start();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
+			WorkflowEventRuntimeBuilder builder = new WorkflowEventRuntimeBuilder();
+			builder.setContext(getId());
+			builder.append("exception", e.getMessage());
+			socketHandler.broadcast("WORKFLOW_RUNTIME_EVENTS_"+builder.getContext(),builder.build());
 		}
 		return null;
 	}

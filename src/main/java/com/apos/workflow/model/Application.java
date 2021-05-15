@@ -28,9 +28,6 @@ public class Application implements IApplication {
 		parentImplementation = implementation;
 	}
 
-	public void execute() {
-		//Script instance.getScript();
-	}
 
 	public void load(IPluginLoad loader, JSONArray jsTool) {
 		this.loadCommonAttributes(jsTool);
@@ -77,9 +74,9 @@ public class Application implements IApplication {
 		    			  WorkflowScriptlet wfScriptlet = (WorkflowScriptlet) scriptlet;
 		    			  populate(wfScriptlet,jobTicketRunner,jobTicketData,parentImplementation.getActivity());
 		    			  jobTicketData.updateScriplet(wfScriptlet);
-		    			  if(wfScriptlet instanceof RemoteScriptlet) {
+		    			 /* if(wfScriptlet instanceof RemoteScriptlet) {
 		    				  ((RemoteScriptlet)wfScriptlet).setPluginSource(this.extendedAttributes.getString(IPlugin.PLUGIN_SRC_ID));
-		    			  }
+		    			  }*/
 		    			  wfScriptlet.run();
 		    			  
 		    			  jobTicketData.populateWithScripletOuput(wfScriptlet.getOutputArgs());

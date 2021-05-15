@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import com.apos.socket.ClientSessionException;
+
 abstract public class EnginesScriptlet {
 
 	  public final static char SCRIPTLET   = 'S';
@@ -34,7 +36,7 @@ abstract public class EnginesScriptlet {
 	  public Map<String, Object> getArgs(char type) throws Exception {
 	    return variables.getArgs(type);
 	  }
-	  public abstract void run();
+	  public abstract void run() throws ClientSessionException;
 	public  void clear() {
 		variables.clear();
 	}
