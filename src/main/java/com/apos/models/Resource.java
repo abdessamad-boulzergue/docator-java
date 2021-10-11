@@ -131,7 +131,23 @@ public class Resource {
 		resource.setType(Resource.getResourceType(ResourceType.TYPE_WORKFLOW));
 		return resource;
 	}
+	
+	public static Resource getDocumentResource() {
+		Resource resource = new Resource();
+		resource.setName("New Document");
+		resource.setDescription("document editor");
+		resource.setType(Resource.getResourceType(ResourceType.TYPE_DOCUMENT));
+		return resource;
+	}
 
+	
+	public static Resource getApplicationResource() {
+		Resource resource = new Resource();
+		resource.setName("New Application");
+		resource.setDescription("mobile application");
+		resource.setType(Resource.getResourceType(ResourceType.TYPE_APPLICATION));
+		return resource;
+	}
 
 
 	public JSONObject toJson() {

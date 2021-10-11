@@ -16,14 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import com.apos.workflow.plugin.WorkflowScriptlet;
 import com.fasterxml.jackson.databind.JsonNode;
 
 @Service
 public class PluginLoader implements IPluginLoad{
 	
-	  private static final String SOCKET_SRC = "socket";
-	  private static final String JAVA_SRC = "java";
 
 	static Logger  logger    = Logger.getLogger(PluginLoader.class);
 
@@ -91,9 +88,10 @@ public class PluginLoader implements IPluginLoad{
 		
 		try {
 			sources.forEach((key,src)->{
-				plugins.putAll( src.getAll());
+				Map<String, IPlugin> srcPlugins = src.getAll();
+				if(srcPlugins!=null && srcPlugins.size()>0)
+				    plugins.putAll( srcPlugins);
 			});
-		
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}

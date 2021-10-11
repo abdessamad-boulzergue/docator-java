@@ -94,7 +94,7 @@ public class ClientStub {
 		try {
 			marshall("ALC");
 			marshall("MTH ".concat(mth));
-		
+ 
 		params.stream().forEach(param->{
 			try {
 					if(param instanceof String) {
@@ -106,6 +106,7 @@ public class ClientStub {
 					marshall("SPRM args = '".concat(String.valueOf(param)).concat("'"));
 			} catch (SocketSendReceiveException e) {
 				logger.error(e.getMessage());
+				
 			}
 		});
 		 result  =   marshall("CALL\n");
@@ -115,14 +116,14 @@ public class ClientStub {
 		} catch (UnmarshallException e) {
 			logger.error(e.getMessage());
 		}
-		return result;
+		return null;
 	}
 	
 	protected String unmarshall(String content) throws UnmarshallException {
 	    int whereRet = content.indexOf(RETOK);
 	    if (whereRet == -1) {
-		    int whereEndRet = content.indexOf(ENDRETOK);
-		    if(whereEndRet==-1) {
+		    int whereEndRet = content.indexOf(RET_ERROR);
+		    if(whereEndRet!=-1) {
 			    int whereError = content.indexOf(RET_ERROR);
 			    int whereEndError = content.indexOf(ENDRET_ERROR);
 			    int start = whereError + RET_ERROR.length();

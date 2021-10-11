@@ -15,6 +15,8 @@ public class ResourceType {
 	
 	public static final String TYPE_WORKFLOW="workflow";
 	public static final String TYPE_PLUGIN="plugin";
+	public static final String TYPE_DOCUMENT = "document";
+	public static final String TYPE_APPLICATION = "application";
 
 	public ResourceType(){
 	}
@@ -33,7 +35,7 @@ public class ResourceType {
 	}
 	
 	public void setName(String name) {
-        if(Arrays.asList(TYPE_WORKFLOW, TYPE_PLUGIN).contains(name)) {
+        if(Arrays.asList(TYPE_WORKFLOW, TYPE_PLUGIN,TYPE_DOCUMENT,TYPE_APPLICATION).contains(name)) {
    		 this.name = name;
 
 		}else {

@@ -45,7 +45,7 @@ private List<ScriptParams> _params;
     _pythonFileName = pythonFileName ;
     _className= className;
     _resTypes = resType;
-    _params = new ArrayList<ScriptParams>();
+    _params = new ArrayList<>();
     Iterator<String> keysIter = params.keys();
     while(keysIter.hasNext()) {
       String key = keysIter.next();
@@ -55,7 +55,10 @@ private List<ScriptParams> _params;
       }
       else if(value instanceof JSONObject) {
     	  JSONObject jsonValue = (JSONObject) value;
-    	  _params.add(new ScriptParams(key, jsonValue.getString(ScriptParams.VALUE), jsonValue.getString(ScriptParams.TYPE)));
+    	  String required = "false";
+    	  if(jsonValue.has(ScriptParams.REQUIRED))
+    		  required = jsonValue.getString(ScriptParams.REQUIRED);
+    	  _params.add(new ScriptParams(key, jsonValue.getString(ScriptParams.VALUE), jsonValue.getString(ScriptParams.TYPE),required));
       }
     }
   }

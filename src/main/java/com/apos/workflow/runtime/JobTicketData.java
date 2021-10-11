@@ -127,8 +127,8 @@ public class JobTicketData {
 		while(match.find()) {
 			String matched = value.substring(match.start()+1,match.end()-1);
 			String matchedValue = getMatchValue(scriplet,matched,properties);
-			matchedValue = constructString(scriplet, properties, pattern, matchedValue);
 			if(matchedValue!=null) {
+				matchedValue = constructString(scriplet, properties, pattern, matchedValue);
 				result = result.replaceAll("\\{" + matched + "\\}", Matcher.quoteReplacement(matchedValue));
 			}
 		}

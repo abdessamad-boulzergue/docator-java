@@ -168,5 +168,12 @@ public class ResourceTools {
 			}
 			return (JSONObject) resource.get(INDEX_ATTRIBUTES);
 		}
+
+		public static JSONArray getResource(String type, JSONObject attributes) {
+
+			    	JSONArray resourceNode = createBasicElement(type,true);
+			        setAttributes(resourceNode,attributes);
+			        return resourceNode;
+		}
 	
 }

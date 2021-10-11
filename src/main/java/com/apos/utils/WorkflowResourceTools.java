@@ -150,7 +150,6 @@ public class WorkflowResourceTools extends ResourceTools {
 
 		JSONArray workflowNode = createBasicElement(WF_REPOSITORY_WORKFLOW_TYPE,false);
 		setAttributes(workflowNode,workflowAttrs);
-		//JSONArray content = getContent(workflowNode);
 		
 		JSONArray xpdlNode = createBasicElement(WF_XPDL_TYPE);
 		JSONArray xpdlPackageNode = createBasicElement(WF_XPDL_PACKAGE_TYPE);

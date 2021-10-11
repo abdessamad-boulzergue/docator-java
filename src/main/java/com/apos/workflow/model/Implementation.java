@@ -30,7 +30,6 @@ public class Implementation {
 	}
 
 	public boolean isStarter() {
-		// TODO Auto-generated method stub
 		return application.isStarter();
 	}
 
