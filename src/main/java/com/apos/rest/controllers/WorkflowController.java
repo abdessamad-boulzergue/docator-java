@@ -54,7 +54,6 @@ public class WorkflowController {
    public ResponseEntity<String> run(@RequestParam(name="workflowId") String workflowId){
 	   
 	   
-
 	   String wfModelPath = resourceService.getResourcePath(workflowId);
 		String jobTicketData="C:/hcs/env/test/client_4.1/tagTest2_1.1/config/1142.prop";
 		Map<String, String> mapParameters = new HashMap<String, String>();
@@ -99,16 +98,10 @@ public class WorkflowController {
 			if(savedResource!=null && savedResource.getId()>0) {
 				String versionName = savedResource.getMaxVersion().getName();
 				attributes.put("version", versionName);				
-				result =  resourceService.writeResourceTofile(String.valueOf(savedResource.getId()), json.toString());
-
-				if(result == null || result.isEmpty()) {
-					 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("save failed") ; 
-				}
-				
+				resourceService.writeResourceTofile(String.valueOf(savedResource.getId()), json.toString());
 			}else {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("save failed") ; 
 			}
-			
 		} catch (Exception e) {
 			 logger.error("save workflow : exception ".concat(e.getMessage()));
 			 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage()) ; 

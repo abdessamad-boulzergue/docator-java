@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.apos.plugins.GeneralConfigs;
+import com.apos.resources.service.ResourceLoaderService;
 
 @Service
 public class WizardService  {

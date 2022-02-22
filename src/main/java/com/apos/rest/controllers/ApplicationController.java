@@ -52,11 +52,9 @@ public class ApplicationController {
 	@PostMapping
 	public ResponseEntity<String> save(@RequestBody String jsonString){
 
-		String result=null;
 		try {
 			
 			String content = URLDecoder.decode(jsonString,"utf-8");
-			
 			JSONArray json = new JSONArray(content);
 			JSONObject attributes = json.getJSONObject(1);
 			ResourceType type = resourceService.getType(ResourceType.TYPE_APPLICATION);
@@ -66,11 +64,7 @@ public class ApplicationController {
 			if(savedResource!=null && savedResource.getId()>0) {
 				String versionName = savedResource.getMaxVersion().getName();
 				attributes.put("version", versionName);				
-				result =  resourceService.writeResourceTofile(String.valueOf(savedResource.getId()), json.toString());
-
-				if(result == null || result.isEmpty()) {
-					 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("save failed") ; 
-				}
+				resourceService.writeResourceTofile(String.valueOf(savedResource.getId()), json.toString());
 				
 			}else {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("save failed") ; 
@@ -81,7 +75,6 @@ public class ApplicationController {
 			 logger.error("save document : exception ".concat(msg));
 			 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(msg) ; 
 		}
-	     return ResponseEntity.status(HttpStatus.OK).body(result) ; 
-
+	     return ResponseEntity.status(HttpStatus.OK).body("") ;  
 	}
 }

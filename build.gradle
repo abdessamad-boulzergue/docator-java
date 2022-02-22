@@ -42,6 +42,9 @@ dependencies {
 	implementation group: 'log4j', name: 'log4j', version: '1.2.17'
 	// https://mvnrepository.com/artifact/org.springframework/spring-websocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation group: 'org.mvel', name: 'mvel2', version: '2.4.12.Final'
+	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+	implementation group: 'commons-io', name: 'commons-io', version: '2.7'
 	
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'

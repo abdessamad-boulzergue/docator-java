@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.apos.plugins.IPluginLoad;
-import com.apos.resources.ResourceLoaderService;
+import com.apos.resources.service.ResourceLoaderService;
 import com.apos.rest.repo.UserRepo;
 import com.fasterxml.jackson.databind.JsonNode;
 

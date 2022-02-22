@@ -71,11 +71,8 @@ public class DocumentController {
 			if(savedResource!=null && savedResource.getId()>0) {
 				String versionName = savedResource.getMaxVersion().getName();
 				attributes.put("version", versionName);				
-				result =  resourceService.writeResourceTofile(String.valueOf(savedResource.getId()), json.toString());
+				resourceService.writeResourceTofile(String.valueOf(savedResource.getId()), json.toString());
 
-				if(result == null || result.isEmpty()) {
-					 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("save failed") ; 
-				}
 				
 			}else {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("save failed") ; 

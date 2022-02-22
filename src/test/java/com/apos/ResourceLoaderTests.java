@@ -3,13 +3,16 @@ package com.apos;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Date;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.apos.resources.ResourceLoaderService;
+import com.apos.resources.IResource;
+import com.apos.resources.service.ResourceLoaderService;
 import com.apos.utils.ResourceTools;
 import com.apos.utils.WorkflowResourceTools;
 
@@ -19,6 +22,7 @@ import com.apos.utils.WorkflowResourceTools;
 		)
 public class ResourceLoaderTests {
 
+	private static final long SIZE =1024L;
 	@Autowired
 	ResourceLoaderService resourceLoad;
 	@Test
@@ -26,9 +30,10 @@ public class ResourceLoaderTests {
 		assertDoesNotThrow(()->{
 			String name = "2";
 			JSONArray content = WorkflowResourceTools.getStarterWorkflow();
-			resourceLoad.writeResource(name, content.toString());
-			String fileContent = resourceLoad.readResource(name);
-			assertEquals(content.toString(), fileContent);
+	        IResource document = new com.apos.resources.Resource(name, SIZE, new Date());
+			resourceLoad.saveResource(document, content.toString().getBytes());
+			IResource resource = resourceLoad.getResource(name);
+			assertEquals(content.toString(), new String(resource.getContent()));
 		});
 	}
 	

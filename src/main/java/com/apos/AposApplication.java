@@ -30,6 +30,9 @@ public class AposApplication implements ApplicationRunner	 {
 		if(resourceService.getType(ResourceType.TYPE_PLUGIN) == null) {
 			resourceService.saveType(Resource.getResourceType(ResourceType.TYPE_PLUGIN));
 		}
+		if(resourceService.getType(ResourceType.TYPE_APPLICATION) == null) {
+			resourceService.saveType(Resource.getResourceType(ResourceType.TYPE_APPLICATION));
+		}
 		
 		System.out.println("Application started with option names : "+ args.getOptionNames());
 		System.out.println("Application started with non option args : "+ args.getNonOptionArgs());

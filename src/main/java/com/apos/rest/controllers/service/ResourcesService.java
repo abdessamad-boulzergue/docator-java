@@ -1,7 +1,7 @@
 package com.apos.rest.controllers.service;
 
 import java.io.IOException;
-import java.nio.file.NoSuchFileException;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import com.apos.models.Resource;
 import com.apos.models.ResourceType;
 import com.apos.models.ResourceVersion;
-import com.apos.resources.ResourceLoaderService;
-import com.apos.rest.exceptions.ResourceAccessException;
+import com.apos.resources.IResource;
+import com.apos.resources.ResourceStorageService;
 import com.apos.rest.exceptions.ResourceNotFoundException;
 import com.apos.rest.repo.ResourceRepo;
 import com.apos.rest.repo.ResourceTypeRepo;
@@ -21,8 +21,10 @@ import com.apos.rest.repo.VersionRepo;
 @Service
 public class ResourcesService {
 
+	private static final long SIZE = 1024l;
+
 	@Autowired
-	   ResourceLoaderService resourceLoader;
+	ResourceStorageService resourceLoader;
 	
 	@Autowired
 	ResourceRepo resourceRepo;
@@ -95,36 +97,46 @@ public class ResourcesService {
 
 	public ResourceType getType(String typeName) {
 		ResourceType type = typesRepo.get(typeName);
-		
 		return type;
 	}
 
-	public String writeResourceTofile(String fileName, String content)  {
-		
-		return resourceLoader.writeResource(fileName, content);
+	public void writeResourceTofile(String fileName, String content)  {
+        IResource document = new com.apos.resources.Resource(fileName,fileName, SIZE, new Date());
+		 resourceLoader.saveResource(document, content.getBytes());
 	}
 
 	public String readResourceFromFile(String fileName) {
-		return resourceLoader.readResource(fileName);
+		IResource resource= resourceLoader.getResource(fileName);
+		String result = null;
+		if(resource !=null)
+			result= new String(resource.getContent());
+		else
+			throw new ResourceNotFoundException(fileName);
+		return result;
 	}
 
 	public void delete(long id) {
 		try {
 			resourceRepo.deleteById(id);
-			resourceLoader.delete(String.valueOf(id));
-		} catch (EmptyResultDataAccessException | NoSuchFileException  e) {
+			resourceLoader.deleteResource(String.valueOf(id));
+		} catch (EmptyResultDataAccessException   e) {
 			throw new ResourceNotFoundException(id);
-		} catch (IOException e) {
-			throw new ResourceAccessException(String.valueOf(id));
 		}
 	}
 
-	public String getResourcePath(String workflowId) {
-		return resourceLoader.getResourcePath(workflowId);
-	}
+	
 
 	public String readResourceFromJsonFile(String id) {
 		return readResourceFromFile(id.concat(".json"));
+	}
+
+	public String getResourcePath(String id) {
+		try {
+			return resourceLoader.getResource(id).toFile().getAbsolutePath();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 }
