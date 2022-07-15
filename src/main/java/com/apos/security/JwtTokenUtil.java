@@ -246,13 +246,11 @@ public class JwtTokenUtil implements Serializable {
   private int getExpiration() {
     try {
       String exp = "10";//env.getProperty(PROP_KEY_EXPIRATION);
-      if (exp !=null){
-        return Integer.parseInt(exp);
-      }
+      return Integer.parseInt(exp);
+     
     }catch (JwtException e) {
       return EXPIRATION;
     }
-    return EXPIRATION; 
   }
 
 

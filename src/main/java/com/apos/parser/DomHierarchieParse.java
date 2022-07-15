@@ -161,7 +161,6 @@ public class DomHierarchieParse extends HierarchieParse{
 			}
 			
 		} catch (SAXException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -201,7 +200,6 @@ public class DomHierarchieParse extends HierarchieParse{
 		  }
 
 	public Node getNode() {
-		// TODO Auto-generated method stub
 		return localNode;
 	}
 	  public static String getLocalName(String nodeName)

@@ -2,7 +2,6 @@ package com.apos;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.HashMap;
 
@@ -14,7 +13,6 @@ import org.springframework.expression.AccessException;
 import com.apos.plugins.GeneralConfigs;
 import com.apos.wizard.ActionDefinition;
 import com.apos.wizard.WizardActionManager;
-import com.fasterxml.jackson.databind.JsonNode;
 
 @SpringBootTest(
 		webEnvironment = SpringBootTest.WebEnvironment.MOCK,

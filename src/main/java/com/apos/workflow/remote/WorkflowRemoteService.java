@@ -44,7 +44,6 @@ public class WorkflowRemoteService implements WorkflowRemote{
 		try {
 			wfStub.startSession();
 		} catch (ClientSessionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		wfStub.startWorkflow(contextId, wfResourceId, params);

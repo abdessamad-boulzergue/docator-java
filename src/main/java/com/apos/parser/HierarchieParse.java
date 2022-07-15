@@ -12,7 +12,6 @@ public abstract class HierarchieParse implements Comparable<HierarchieParse> {
 
 	@Override
 	public int compareTo(HierarchieParse o) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 	

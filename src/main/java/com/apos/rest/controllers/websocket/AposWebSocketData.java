@@ -76,7 +76,6 @@ public class AposWebSocketData {
 	}
 
 	public String getTopic() {
-		// TODO Auto-generated method stub
 		return data.getString(TOPIC);
 	}
 }

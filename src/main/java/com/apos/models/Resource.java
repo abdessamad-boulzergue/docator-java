@@ -17,7 +17,6 @@ import javax.validation.constraints.NotNull;
 import org.json.JSONObject;
 
 import com.apos.utils.ResourceTools;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 @Entity

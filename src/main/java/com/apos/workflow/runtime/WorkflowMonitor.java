@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.apos.rest.controllers.websocket.AposSocketHandler;
-import com.apos.rest.controllers.websocket.AposWebSocketData;
 
 @Component
 public class WorkflowMonitor implements JobTicketListener{

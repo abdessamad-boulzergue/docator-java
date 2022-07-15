@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.apos.rest.controllers.websocket.AposSocketHandler;
-import com.apos.rest.controllers.websocket.AposWebSocketData;
 import com.apos.rest.exceptions.ResourceAccessException;
 import com.apos.workflow.runtime.utils.WorkflowEventRuntimeBuilder;
 @Component

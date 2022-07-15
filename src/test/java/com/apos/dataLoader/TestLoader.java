@@ -1,15 +1,10 @@
 package com.apos.dataLoader;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
 import com.apos.dataloader.DataFileReader;
 import com.apos.dataloader.DataFileWriter;
-import com.apos.dataloader.DataReader;
-import com.apos.dataloader.DataWriter;
 import com.apos.dataloader.JSONDataReader;
 import com.apos.dataloader.LoaderProcess;
 import com.apos.dataloader.StringDataReader;

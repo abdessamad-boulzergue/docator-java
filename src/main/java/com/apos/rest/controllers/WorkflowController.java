@@ -1,6 +1,5 @@
 package com.apos.rest.controllers;
 
-import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;

@@ -10,11 +10,9 @@ import java.util.Observer;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.apos.plugins.PluginLoader;
 import com.apos.workflow.model.Activity;
-import com.apos.workflow.plugin.WorkflowScriptlet;
 
 public class JobTicket implements IJobTicket, Observer{
 	  static Logger  logger        = Logger.getLogger(JobTicket.class);

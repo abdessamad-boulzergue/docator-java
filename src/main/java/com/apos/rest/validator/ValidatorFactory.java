@@ -4,7 +4,7 @@ import com.apos.models.Resource;
 
 public class ValidatorFactory {
 
-	public AposValidator getValidator(Class cls) {
+	public AposValidator<?> getValidator(Class<?> cls) {
 		
 		if(cls ==null)
 			throw new IllegalArgumentException("class can not be null");

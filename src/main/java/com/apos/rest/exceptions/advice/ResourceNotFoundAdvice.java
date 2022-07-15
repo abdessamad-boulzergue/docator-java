@@ -1,8 +1,6 @@
 package com.apos.rest.exceptions.advice;
 
-import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
-import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;

@@ -51,7 +51,6 @@ public class AuthenticationService implements IAuthentication{
 			}
 			
 		} catch (NoSuchElementException  e) {
-			// TODO: handle exception
 		}
 		
 		return token;

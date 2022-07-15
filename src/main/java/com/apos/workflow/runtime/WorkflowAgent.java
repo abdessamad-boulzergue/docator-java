@@ -6,9 +6,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.apos.rest.controllers.websocket.AposSocketHandler;
-import com.apos.rest.controllers.websocket.AposWebSocketData;
-
 @Service
 public class WorkflowAgent {
 

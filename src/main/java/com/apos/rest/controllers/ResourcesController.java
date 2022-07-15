@@ -95,7 +95,8 @@ public class ResourcesController {
 	@PostMapping
 	public ResponseEntity<Object> saveResource(@RequestBody Resource resource){
 		
-		    AposValidator<Resource> validator = validatorFactory.getValidator(Resource.class);
+		    @SuppressWarnings("unchecked")
+			AposValidator<Resource> validator = (AposValidator<Resource>) validatorFactory.getValidator(Resource.class);
 		    validator.validate(resource);
 		    
 			Resource savedResource = resourceService.saveResource(resource);

@@ -5,11 +5,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import org.json.JSONObject;
-
 import com.apos.plugins.EnginesScriptlet;
-import com.apos.plugins.IPlugin;
-import com.apos.workflow.model.Application;
 
 public class EndingNode extends GenericPlugin{
 	  private final static String START_ICON = "images/start-workflow.png";

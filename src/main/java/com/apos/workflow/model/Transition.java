@@ -3,7 +3,6 @@ package com.apos.workflow.model;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.apos.plugins.IPlugin;
 import com.apos.plugins.IPluginLoad;
 import com.apos.utils.ResourceTools;
 import com.apos.utils.WorkflowResourceTools;

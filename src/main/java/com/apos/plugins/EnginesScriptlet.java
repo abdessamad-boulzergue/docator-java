@@ -3,8 +3,6 @@ package com.apos.plugins;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.json.JSONObject;
-
 import com.apos.socket.ClientSessionException;
 
 abstract public class EnginesScriptlet {

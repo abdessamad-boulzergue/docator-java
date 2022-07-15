@@ -1,16 +1,13 @@
 package com.apos.workflow.plugin;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import com.apos.plugins.EnginesScriptlet;
-import com.apos.workflow.model.Activity;
 import com.apos.workflow.runtime.IJobTicketRunner;
 import com.apos.workflow.runtime.JobTicketData;
-import com.apos.workflow.runtime.JobTicketRunner;
 
 abstract public class WorkflowScriptlet extends EnginesScriptlet{
 

@@ -25,7 +25,6 @@ public class JsonUtils {
 			return returned;
 		  }
 	
-	@SuppressWarnings("unchecked")
 	  public static Map<String, Object> fromJsonHashMap(JSONObject map) throws JSONException {
 	    HashMap<String, Object> returned = new HashMap<>();
 
